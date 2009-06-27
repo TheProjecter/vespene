@@ -1,0 +1,197 @@
+05-06 23:07:07 jdbc[6]: SQLException
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement CREATE TABLE PUBLIC.PREFERENCES (
+    ID INTEGER(0) NOT NULL,
+    PLUGIN VARCHAR(20) NOT NULL,
+    TEMPLATEPATH VARCHAR(100) NOT NULL,
+    CONSTRAINT NULL[*] ) ; expected identifier; SQL statement:
+CREATE TABLE PUBLIC.PREFERENCES (
+    ID INTEGER(0) NOT NULL,
+    PLUGIN VARCHAR(20) NOT NULL,
+    TEMPLATEPATH VARCHAR(100) NOT NULL,
+    CONSTRAINT null ) [42001-111]
+	at org.h2.message.Message.getSQLException(Message.java:107)
+	at org.h2.message.Message.getSQLException(Message.java:118)
+	at org.h2.message.Message.getSyntaxError(Message.java:143)
+	at org.h2.command.Parser.readIdentifierWithSchema(Parser.java:2472)
+	at org.h2.command.Parser.parseAlterTableAddConstraintIf(Parser.java:4445)
+	at org.h2.command.Parser.parseCreateTable(Parser.java:4616)
+	at org.h2.command.Parser.parseCreate(Parser.java:3453)
+	at org.h2.command.Parser.parsePrepared(Parser.java:321)
+	at org.h2.command.Parser.parse(Parser.java:288)
+	at org.h2.command.Parser.parse(Parser.java:260)
+	at org.h2.command.Parser.prepareCommand(Parser.java:232)
+	at org.h2.engine.Session.prepareLocal(Session.java:409)
+	at org.h2.engine.Session.prepareCommand(Session.java:370)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1042)
+	at org.h2.jdbc.JdbcStatement.executeUpdate(JdbcStatement.java:113)
+	at org.executequery.databasemediators.spi.DefaultStatementExecutor.updateRecords(DefaultStatementExecutor.java:980)
+	at org.executequery.gui.CreateTablePanel$2.run(CreateTablePanel.java:214)
+	at org.underworldlabs.swing.GUIUtils$2.construct(GUIUtils.java:234)
+	at org.underworldlabs.swing.util.SwingWorker$2.run(SwingWorker.java:130)
+	at java.lang.Thread.run(Unknown Source)
+05-09 21:30:42 jdbc[4]: SQLException
+org.h2.jdbc.JdbcSQLException: Column Struts 2.0 not found; SQL statement:
+INSERT INTO PREFERENCES (ID,
+                         PLUGIN
+                         )
+VALUES (1,
+        "Struts 2.0"
+) [42122-111]
+	at org.h2.message.Message.getSQLException(Message.java:107)
+	at org.h2.message.Message.getSQLException(Message.java:118)
+	at org.h2.message.Message.getSQLException(Message.java:77)
+	at org.h2.expression.ExpressionColumn.optimize(ExpressionColumn.java:130)
+	at org.h2.command.dml.Insert.prepare(Insert.java:196)
+	at org.h2.command.Parser.prepareCommand(Parser.java:233)
+	at org.h2.engine.Session.prepareLocal(Session.java:409)
+	at org.h2.engine.Session.prepareCommand(Session.java:370)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1042)
+	at org.h2.jdbc.JdbcStatement.executeUpdate(JdbcStatement.java:113)
+	at org.executequery.databasemediators.spi.DefaultStatementExecutor.updateRecords(DefaultStatementExecutor.java:980)
+	at org.executequery.databasemediators.spi.DefaultStatementExecutor.executeQuery(DefaultStatementExecutor.java:825)
+	at org.executequery.sql.QueryDispatcher.executeSQL(QueryDispatcher.java:417)
+	at org.executequery.sql.QueryDispatcher.access$000(QueryDispatcher.java:52)
+	at org.executequery.sql.QueryDispatcher$1.construct(QueryDispatcher.java:220)
+	at org.underworldlabs.swing.util.SwingWorker$2.run(SwingWorker.java:130)
+	at java.lang.Thread.run(Unknown Source)
+05-09 21:31:12 jdbc[4]: SQLException
+org.h2.jdbc.JdbcSQLException: NULL not allowed for column TEMPLATEPATH; SQL statement:
+INSERT INTO PREFERENCES (ID,
+                         PLUGIN
+                         )
+VALUES (1,
+        'Struts 2.0'
+) [90006-111]
+	at org.h2.message.Message.getSQLException(Message.java:107)
+	at org.h2.message.Message.getSQLException(Message.java:118)
+	at org.h2.message.Message.getSQLException(Message.java:77)
+	at org.h2.table.Column.validateConvertUpdateSequence(Column.java:279)
+	at org.h2.table.Table.validateConvertUpdateSequence(Table.java:582)
+	at org.h2.command.dml.Insert.update(Insert.java:97)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:71)
+	at org.h2.command.Command.executeUpdate(Command.java:207)
+	at org.h2.jdbc.JdbcStatement.executeUpdate(JdbcStatement.java:117)
+	at org.executequery.databasemediators.spi.DefaultStatementExecutor.updateRecords(DefaultStatementExecutor.java:980)
+	at org.executequery.databasemediators.spi.DefaultStatementExecutor.executeQuery(DefaultStatementExecutor.java:825)
+	at org.executequery.sql.QueryDispatcher.executeSQL(QueryDispatcher.java:417)
+	at org.executequery.sql.QueryDispatcher.access$000(QueryDispatcher.java:52)
+	at org.executequery.sql.QueryDispatcher$1.construct(QueryDispatcher.java:220)
+	at org.underworldlabs.swing.util.SwingWorker$2.run(SwingWorker.java:130)
+	at java.lang.Thread.run(Unknown Source)
+05-09 21:33:45 jdbc[4]: SQLException
+org.h2.jdbc.JdbcSQLException: Column PLUGIN not found; SQL statement:
+INSERT INTO PREFERENCES (ID,PLUGIN)
+VALUES (1,'Struts 2.0') [42122-111]
+	at org.h2.message.Message.getSQLException(Message.java:107)
+	at org.h2.message.Message.getSQLException(Message.java:118)
+	at org.h2.message.Message.getSQLException(Message.java:77)
+	at org.h2.table.Table.getColumn(Table.java:512)
+	at org.h2.command.Parser.parseColumnList(Parser.java:748)
+	at org.h2.command.Parser.parseInsert(Parser.java:888)
+	at org.h2.command.Parser.parsePrepared(Parser.java:366)
+	at org.h2.command.Parser.parse(Parser.java:288)
+	at org.h2.command.Parser.parse(Parser.java:260)
+	at org.h2.command.Parser.prepareCommand(Parser.java:232)
+	at org.h2.engine.Session.prepareLocal(Session.java:409)
+	at org.h2.engine.Session.prepareCommand(Session.java:370)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1042)
+	at org.h2.jdbc.JdbcStatement.executeUpdate(JdbcStatement.java:113)
+	at org.executequery.databasemediators.spi.DefaultStatementExecutor.updateRecords(DefaultStatementExecutor.java:980)
+	at org.executequery.databasemediators.spi.DefaultStatementExecutor.executeQuery(DefaultStatementExecutor.java:825)
+	at org.executequery.sql.QueryDispatcher.executeSQL(QueryDispatcher.java:417)
+	at org.executequery.sql.QueryDispatcher.access$000(QueryDispatcher.java:52)
+	at org.executequery.sql.QueryDispatcher$1.construct(QueryDispatcher.java:220)
+	at org.underworldlabs.swing.util.SwingWorker$2.run(SwingWorker.java:130)
+	at java.lang.Thread.run(Unknown Source)
+05-09 21:34:02 jdbc[2]: SQLException
+org.h2.jdbc.JdbcSQLException: Timeout trying to lock table PREFERENCES; SQL statement:
+SELECT COUNT(*) FROM PUBLIC.PREFERENCES [50200-111]
+	at org.h2.message.Message.getSQLException(Message.java:107)
+	at org.h2.message.Message.getSQLException(Message.java:118)
+	at org.h2.message.Message.getSQLException(Message.java:77)
+	at org.h2.table.TableData.doLock(TableData.java:437)
+	at org.h2.table.TableData.lock(TableData.java:375)
+	at org.h2.table.TableFilter.lock(TableFilter.java:107)
+	at org.h2.command.dml.Select.queryWithoutCache(Select.java:547)
+	at org.h2.command.dml.Query.query(Query.java:233)
+	at org.h2.command.CommandContainer.query(CommandContainer.java:81)
+	at org.h2.command.Command.executeQueryLocal(Command.java:141)
+	at org.h2.command.Command.executeQuery(Command.java:122)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:75)
+	at org.executequery.databaseobjects.impl.DefaultDatabaseTable.getDataRowCount(DefaultDatabaseTable.java:501)
+	at org.executequery.gui.browser.BrowserTableEditingPanel.reloadDataRowCount(BrowserTableEditingPanel.java:885)
+	at org.executequery.gui.browser.BrowserTableEditingPanel.setValues(BrowserTableEditingPanel.java:851)
+	at org.executequery.gui.browser.BrowserController.buildPanelView(BrowserController.java:365)
+	at org.executequery.gui.browser.BrowserController.valueChanged_(BrowserController.java:253)
+	at org.executequery.gui.browser.ConnectionsTreePanel.valueChanged(ConnectionsTreePanel.java:964)
+	at org.executequery.gui.browser.ConnectionsTreePanel.access$100(ConnectionsTreePanel.java:72)
+	at org.executequery.gui.browser.ConnectionsTreePanel$1.construct(ConnectionsTreePanel.java:939)
+	at org.underworldlabs.swing.util.SwingWorker$2.run(SwingWorker.java:130)
+	at java.lang.Thread.run(Unknown Source)
+05-09 21:34:06 jdbc[2]: SQLException
+org.h2.jdbc.JdbcSQLException: Timeout trying to lock table PREFERENCES; SQL statement:
+SELECT COUNT(*) FROM PUBLIC.PREFERENCES [50200-111]
+	at org.h2.message.Message.getSQLException(Message.java:107)
+	at org.h2.message.Message.getSQLException(Message.java:118)
+	at org.h2.message.Message.getSQLException(Message.java:77)
+	at org.h2.table.TableData.doLock(TableData.java:437)
+	at org.h2.table.TableData.lock(TableData.java:375)
+	at org.h2.table.TableFilter.lock(TableFilter.java:107)
+	at org.h2.command.dml.Select.queryWithoutCache(Select.java:547)
+	at org.h2.command.dml.Query.query(Query.java:233)
+	at org.h2.command.CommandContainer.query(CommandContainer.java:81)
+	at org.h2.command.Command.executeQueryLocal(Command.java:141)
+	at org.h2.command.Command.executeQuery(Command.java:122)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:75)
+	at org.executequery.databaseobjects.impl.DefaultDatabaseTable.getDataRowCount(DefaultDatabaseTable.java:501)
+	at org.executequery.gui.browser.BrowserTableEditingPanel.reloadDataRowCount(BrowserTableEditingPanel.java:885)
+	at org.executequery.gui.browser.BrowserTableEditingPanel.setValues(BrowserTableEditingPanel.java:851)
+	at org.executequery.gui.browser.BrowserController.buildPanelView(BrowserController.java:365)
+	at org.executequery.gui.browser.BrowserController.valueChanged_(BrowserController.java:253)
+	at org.executequery.gui.browser.ConnectionsTreePanel.valueChanged(ConnectionsTreePanel.java:964)
+	at org.executequery.gui.browser.ConnectionsTreePanel.access$100(ConnectionsTreePanel.java:72)
+	at org.executequery.gui.browser.ConnectionsTreePanel$1.construct(ConnectionsTreePanel.java:939)
+	at org.underworldlabs.swing.util.SwingWorker$2.run(SwingWorker.java:130)
+	at java.lang.Thread.run(Unknown Source)
+05-09 21:34:09 jdbc[6]: SQLException
+org.h2.jdbc.JdbcSQLException: Timeout trying to lock table PREFERENCES; SQL statement:
+SELECT * FROM PUBLIC.PREFERENCES [50200-111]
+	at org.h2.message.Message.getSQLException(Message.java:107)
+	at org.h2.message.Message.getSQLException(Message.java:118)
+	at org.h2.message.Message.getSQLException(Message.java:77)
+	at org.h2.table.TableData.doLock(TableData.java:437)
+	at org.h2.table.TableData.lock(TableData.java:375)
+	at org.h2.table.TableFilter.lock(TableFilter.java:107)
+	at org.h2.command.dml.Select.queryWithoutCache(Select.java:547)
+	at org.h2.command.dml.Query.query(Query.java:233)
+	at org.h2.command.CommandContainer.query(CommandContainer.java:81)
+	at org.h2.command.Command.executeQueryLocal(Command.java:141)
+	at org.h2.command.Command.executeQuery(Command.java:122)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:75)
+	at org.executequery.databasemediators.spi.DefaultStatementExecutor.getResultSet(DefaultStatementExecutor.java:275)
+	at org.executequery.gui.browser.TableDataTab.setTableResultsPanel(TableDataTab.java:194)
+	at org.executequery.gui.browser.TableDataTab.access$200(TableDataTab.java:56)
+	at org.executequery.gui.browser.TableDataTab$1.construct(TableDataTab.java:149)
+	at org.underworldlabs.swing.util.SwingWorker$2.run(SwingWorker.java:130)
+	at java.lang.Thread.run(Unknown Source)
+05-09 21:34:14 jdbc[6]: SQLException
+org.h2.jdbc.JdbcSQLException: Timeout trying to lock table PREFERENCES; SQL statement:
+SELECT * FROM PUBLIC.PREFERENCES [50200-111]
+	at org.h2.message.Message.getSQLException(Message.java:107)
+	at org.h2.message.Message.getSQLException(Message.java:118)
+	at org.h2.message.Message.getSQLException(Message.java:77)
+	at org.h2.table.TableData.doLock(TableData.java:437)
+	at org.h2.table.TableData.lock(TableData.java:375)
+	at org.h2.table.TableFilter.lock(TableFilter.java:107)
+	at org.h2.command.dml.Select.queryWithoutCache(Select.java:547)
+	at org.h2.command.dml.Query.query(Query.java:233)
+	at org.h2.command.CommandContainer.query(CommandContainer.java:81)
+	at org.h2.command.Command.executeQueryLocal(Command.java:141)
+	at org.h2.command.Command.executeQuery(Command.java:122)
+	at org.h2.jdbc.JdbcStatement.executeQuery(JdbcStatement.java:75)
+	at org.executequery.databasemediators.spi.DefaultStatementExecutor.getResultSet(DefaultStatementExecutor.java:275)
+	at org.executequery.gui.browser.TableDataTab.setTableResultsPanel(TableDataTab.java:194)
+	at org.executequery.gui.browser.TableDataTab.access$200(TableDataTab.java:56)
+	at org.executequery.gui.browser.TableDataTab$1.construct(TableDataTab.java:149)
+	at org.underworldlabs.swing.util.SwingWorker$2.run(SwingWorker.java:130)
+	at java.lang.Thread.run(Unknown Source)
