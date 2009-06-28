@@ -127,10 +127,10 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 	 * using wizard as execution context.
 	 */
 	public boolean performFinish() {
-		//final String containerName = page.getContainerName();
-		final String fileName = "aaaaaa.txt";
 		
-		final List<SpringServices> listSpringDef = page.getSelectedServices();
+		
+		
+		final List<SpringServices> listSpringServices = page.getSelectedServices();
 		final String serviceInterfacePackage   = page.getTextServiceInterfacePackage();
 				
 		
@@ -143,8 +143,8 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 		
 
 		
-		SpringPersistProperties springPersistProperties = new SpringPersistProperties(proj, listSpringDef);
-		springPersistProperties.storeSpringDef();
+		SpringPersistProperties springPersistProperties = new SpringPersistProperties(proj, listSpringServices);
+		springPersistProperties.storeSpringServices();
 
 		try {
 			proj.setPersistentProperty(new QualifiedName("", "ServiceNamePattern"), page.getTextServiceNamePattern() );
@@ -164,7 +164,7 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				
 				try {
-					doFinish(listSpringDef, serviceInterfacePackage, monitor);
+					doFinish(listSpringServices, serviceInterfacePackage, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -190,6 +190,8 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 	
 	private void doFinish(List<SpringServices> listSpringServices, String serviceInterfacePackage, IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		
+		
 		
 		Utils utils = new Utils();
 		
@@ -239,12 +241,8 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 	        mapRoot.put("serviceName", springService.getServiceName() );
 	     
 			
-			
 			monitor.beginTask("Creating " + springService.getServiceName(), 2);
 
-			System.out.println("1111111111111111111 " );
-			System.out.println("222222222222222222 "+ serviceInterfacePackage );
-			System.out.println("aaaaaaaaaaaa "+ utils.packageToDirectory( serviceInterfacePackage ) );
 			
 			IResource resource = root.findMember(new Path( serviceInterfaceDir ));
 			if (!resource.exists() || !(resource instanceof IContainer)) {
@@ -263,7 +261,7 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 			final IFile file = container.getFile(new Path( fileName ));
 			
 			try {
-				InputStream stream = openContentStream(className, fileName, springService, serviceInterfacePackage);
+				InputStream stream = genStpringContentStream(className, fileName, springService, serviceInterfacePackage);
 				if (file.exists()) {
 					file.setContents(stream, true, true, monitor);
 				} else {
@@ -285,7 +283,7 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 
 	
 
-	private InputStream openContentStream(String className, String fileName, SpringServices springServices, String serviceInterfacePackage) {
+	private InputStream genStpringContentStream(String className, String fileName, SpringServices springServices, String serviceInterfacePackage) {
 		
 		ProjectUtils projectUtils = new ProjectUtils();
 		IProject proj = projectUtils.getProject(selection);

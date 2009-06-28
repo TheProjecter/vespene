@@ -375,7 +375,7 @@ public class AnnotationsUtils {
 			InputStream is = null;
 			try {
 				is = new FileInputStream(f);
-			} catch (FileNotFoundException e) {
+			} catch (FileNotFoundException e) { 
 				e.printStackTrace();
 			}
 			

@@ -116,7 +116,7 @@ public class SpringNewWizardPage extends WizardPage {
 	private Group group3;
 	private Group group2;
 	private Table tableCustomRelations;
-	private Table tableDBTables;
+	private Table tableSpringServices;
 	private Table tableTemplates;
 	private TableColumn tableColumn1;
 	private TableItem tableItem1;
@@ -371,29 +371,29 @@ public class SpringNewWizardPage extends WizardPage {
 				
 				table1LData.grabExcessHorizontalSpace = true;
 				
-				tableDBTables = new Table(group1, SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
-				tableDBTables.setLayoutData(table1LData);
-				tableDBTables.setHeaderVisible(true);
-				tableDBTables.setLinesVisible(true);
+				tableSpringServices = new Table(group1, SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
+				tableSpringServices.setLayoutData(table1LData);
+				tableSpringServices.setHeaderVisible(true);
+				tableSpringServices.setLinesVisible(true);
 				
 		
-				tableDBTables.setLayoutData(table1LData);		
+				tableSpringServices.setLayoutData(table1LData);		
 				
 				{
-					tableColumn1 = new TableColumn(tableDBTables, SWT.NONE);
+					tableColumn1 = new TableColumn(tableSpringServices, SWT.NONE);
 					tableColumn1.setText("Service name");
 					tableColumn1.setWidth(150);
 					tableColumn1.setResizable(false);
-					tableColumn1.setData(tableDBTables);
+					tableColumn1.setData(tableSpringServices);
 					
 				}				
 				
 				{
-					tableColumn1 = new TableColumn(tableDBTables, SWT.NONE);
+					tableColumn1 = new TableColumn(tableSpringServices, SWT.NONE);
 					tableColumn1.setText("Entity");
 					tableColumn1.setWidth(200);
 					tableColumn1.setResizable(false);
-					tableColumn1.setData(tableDBTables);
+					tableColumn1.setData(tableSpringServices);
 					
 				}
 
@@ -641,7 +641,7 @@ public class SpringNewWizardPage extends WizardPage {
 		
 		setEntityPatternPackages();
 		setEntityGrid();
-		tableDBTables.setSelection(0);
+		tableSpringServices.setSelection(0);
 		
 		
 		
@@ -852,7 +852,7 @@ public class SpringNewWizardPage extends WizardPage {
 	
 	
 	public void setPatternServiceName() {
-		TableItem[] tableItem = tableDBTables.getItems();
+		TableItem[] tableItem = tableSpringServices.getItems();
 		
         for (int i = 0; i < tableItem.length; i++) {
             TableItem item = tableItem[i];
@@ -903,16 +903,10 @@ public class SpringNewWizardPage extends WizardPage {
 	
 	
 	public List<SpringServices> getSelectedServices() {
-        TableItem[] tableItem = tableDBTables.getItems();
+        TableItem[] tableItem = tableSpringServices.getItems();
         List<SpringServices> listSpringDef = new ArrayList<SpringServices>();
         
         Utils utils = new Utils();
-        
-        
-       // proj.getPersistentProperty(new QualifiedName("", "SpringServiceInterfacePattern"));
-        
-        
-        
         
         for (int i = 0; i < tableItem.length; i++) {
             TableItem item = tableItem[i];
@@ -920,22 +914,11 @@ public class SpringNewWizardPage extends WizardPage {
             	
             	List<Entity> entityListLocal = new ArrayList<Entity>();
             	
-            	// fazer loop aqui  pegar todos os entities
-//            	Entity entity = new Entity();
-//            	entity.setEntityName( item.getText(1) );
-//            	listEntity.add(entity);
-            	
-            	
-            	System.out.println( "AAAAAAAAAAAAAAAAAAAAAAAAA "+item.getText(1) );
                 StringTokenizer cpTokenizer = new StringTokenizer(item.getText(1), ",");
                 while ( cpTokenizer.hasMoreElements() ) {
                     String element = cpTokenizer.nextToken();
                     
-                    
                     System.out.println("entity string  "+element);
-                    
-
-                    
 
         			for(Iterator<Entity> it = entityList.iterator(); it.hasNext(); ) {
         				Entity entity = (Entity) it.next();
@@ -1062,7 +1045,7 @@ public class SpringNewWizardPage extends WizardPage {
 
 		
 		SpringPersistProperties springDefPersist = new SpringPersistProperties(proj);
-		List<SpringServices> listSpringDef = springDefPersist.loadSpringDef();
+		List<SpringServices> listSpringDef = springDefPersist.loadSpringServices();
 		
 		
 		for(Iterator<Entity> it = entityList.iterator(); it.hasNext(); ) {
@@ -1076,7 +1059,7 @@ public class SpringNewWizardPage extends WizardPage {
 	        String serviceName = parseTemplate.loadTemplateFromString(textServiceNamePattern.getText(), mapRoot);
 			
 			
-			tableItem1 = new TableItem(tableDBTables, SWT.NONE); 
+			tableItem1 = new TableItem(tableSpringServices, SWT.NONE); 
 			tableItem1.setText( new String[] { serviceName, s.getEntityName() } );
 			
 			for(Iterator<SpringServices> itSpringDef = listSpringDef.iterator(); itSpringDef.hasNext(); ) {
@@ -1133,7 +1116,7 @@ public class SpringNewWizardPage extends WizardPage {
 
 	public String getSelectTableName() {
 		//return tableDBTables.items[0].getText(0);
-		return tableDBTables.getItem( tableDBTables.getSelectionIndex() ).getText();
+		return tableSpringServices.getItem( tableSpringServices.getSelectionIndex() ).getText();
 	}
 
 

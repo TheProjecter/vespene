@@ -24,12 +24,12 @@ import com.google.gson.reflect.TypeToken;
 public class SpringPersistProperties {
 	
 	private IProject proj;
-	private List<SpringServices> listSpringDef;	
+	private List<SpringServices> listSpringServices;	
 	
-	public SpringPersistProperties(IProject proj, List<SpringServices> listSpringDef) {
+	public SpringPersistProperties(IProject proj, List<SpringServices> listSpringServices) {
 		super();
 		this.proj = proj;
-		this.listSpringDef = listSpringDef;
+		this.listSpringServices = listSpringServices;
 	}
 	
 	
@@ -42,11 +42,11 @@ public class SpringPersistProperties {
 
 
 
-	public void storeSpringDef() {
+	public void storeSpringServices() {
 		Type listType = new TypeToken<List<SpringServices>>() {}.getType();
 		Gson gson = new Gson();
 
-		String serialize = gson.toJson(listSpringDef, listType);
+		String serialize = gson.toJson(listSpringServices, listType);
 		
 		
 	    try {
@@ -69,7 +69,7 @@ public class SpringPersistProperties {
 	}
 	
 	
-	public List<SpringServices> loadSpringDef() {
+	public List<SpringServices> loadSpringServices() {
 		List<SpringServices> listSpringDef = null;
 		
 		Type listType = new TypeToken<List<SpringServices>>() {}.getType();
