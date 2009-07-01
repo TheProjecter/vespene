@@ -101,6 +101,7 @@ import vespene.project.Utils;
 import vespene.properties.Config;
 import vespene.properties.PojoConfig;
 import vespene.spring.Entity;
+import vespene.spring.SpringDefinitions;
 import vespene.spring.SpringServices;
 
 /**
@@ -356,8 +357,14 @@ public class SpringNewWizardPage extends WizardPage {
 			{
 				Button button14 = new Button(group1, SWT.PUSH | SWT.CENTER);
 				GridData button13LData = new GridData();
+				
+				image = new Image(parent.getDisplay(), getClass().getResourceAsStream("/icons/custom.gif") );
+				button14.setImage(image);	
+				
+				final Composite p = parent;
+				
 				button14.setLayoutData(button13LData);
-				button14.setText("Delete");
+				//button14.setText("Delete");
 			}					
 			
 		
@@ -1003,6 +1010,7 @@ public class SpringNewWizardPage extends WizardPage {
 				textServiceImplementationPackage.setText("");			    	
 			}				
 			
+			
 			temp = proj.getPersistentProperty(new QualifiedName("", "DaoInterfacePackage"));
 			if (temp!=null)  {
 				textDaoInterfacePackage.setText(temp);
@@ -1109,7 +1117,46 @@ public class SpringNewWizardPage extends WizardPage {
 	}
 	
 	
+	public List<SpringDefinitions> getSpringDefinitions() {
+		ProjectUtils projectUtils = new ProjectUtils();
+		IProject proj = projectUtils.getProject(selection);		
+		
+		List<SpringDefinitions> listSpringDefinitions = new ArrayList<SpringDefinitions>();
+		
+		//  
+		try {
+			SpringDefinitions springDefinitions = new SpringDefinitions();
+			springDefinitions.setPackage( proj.getPersistentProperty(new QualifiedName("", "ServiceInterfacePackage")) );
+			springDefinitions.setTemplateFile( proj.getPersistentProperty(new QualifiedName("", "SpringServiceInterfaceTemplateFile")) );
+			springDefinitions.setPattern( proj.getPersistentProperty(new QualifiedName("", "SpringServiceInterfacePattern")) );
+			listSpringDefinitions.add(springDefinitions);
+			
+			springDefinitions = new SpringDefinitions();
+			springDefinitions.setPackage( proj.getPersistentProperty(new QualifiedName("", "ServiceImplementationPackage")) );
+			springDefinitions.setTemplateFile( proj.getPersistentProperty(new QualifiedName("", "SpringServiceImplementationTemplateFile")) );
+			springDefinitions.setPattern( proj.getPersistentProperty(new QualifiedName("", "SpringServiceImplementationPattern")) );
+			listSpringDefinitions.add(springDefinitions);
+			
+			springDefinitions = new SpringDefinitions();			
+			springDefinitions.setPackage( proj.getPersistentProperty(new QualifiedName("", "DaoInterfacePackage")) );
+			springDefinitions.setTemplateFile( proj.getPersistentProperty(new QualifiedName("", "SpringJPADAOInterfaceTemplateFile")) );
+			springDefinitions.setPattern( proj.getPersistentProperty(new QualifiedName("", "SpringJPADAOInterfacePattern")) );
+			listSpringDefinitions.add(springDefinitions);
+			
+			springDefinitions = new SpringDefinitions();			
+			springDefinitions.setPackage( proj.getPersistentProperty(new QualifiedName("", "DaoImplementationPackage")) );
+			springDefinitions.setTemplateFile( proj.getPersistentProperty(new QualifiedName("", "SpringJPADAOImplementationTemplateFile")) );
+			springDefinitions.setPattern( proj.getPersistentProperty(new QualifiedName("", "SpringJPADAOImplementationPattern")) );
+			listSpringDefinitions.add(springDefinitions);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}		
+		
 	
+		return listSpringDefinitions;
+		
+	}
+
 
 
 

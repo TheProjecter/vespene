@@ -1,4 +1,4 @@
-// springServiceInter.ftl ok
+// springJpaDAOImpl.ftl	
 package ${package};
 
 import java.util.Collection;

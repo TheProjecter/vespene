@@ -1,9 +1,14 @@
-// springServiceInter.ftl ok
+// springServiceImpl.ftl
 package ${package};
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 
@@ -11,11 +16,40 @@ import java.util.Map;
 import ${entity.entityPackage};
 </#list>
 
-public interface ${classname} {    
+@Service("${serviceName}") 
+public class ${classname} implements aaaaa {   
+
+
+	@Autowired
+	private ISNfDao dao; // ????
+	
+	private static final String SERVICE_BEAN_ID = "${serviceName}";	
+	
+	
+	public ${classname}() {
+		super();
+	}
+	
+	public static ISNfService getInstance(ApplicationContext context) {
+		return (ISNfService)context.getBean(SERVICE_BEAN_ID);
+	}	
+
+ 
 
 <#list SpringServices.entity as entity>
+
+	@Override
+	@Transactional
+	public ${entity.entityName} find${entity.entityName}ById(${entity.pkType} id) throws Exception {
+		try {
+			return getDao().findNfById(id);
+		} catch (RuntimeException e) {
+			throw new Exception("find${entity.pkType}ById failed with the id " + id + ": " + e.getMessage());
+		}
+	}
+
 	
-	public ${entity.entityName} find${entity.entityName}ById(${entity.pkType} id) throws Exception;
+	
 	public List<${entity.entityName}> findAll${entity.entityName}() throws Exception;
 	public List<${entity.entityName}> find${entity.entityName}ByExpressionQuery(final String expression, final Map<String, Object> parameters, final int firstResult, final int maxResults) throws Exception;
 	public int find${entity.entityName}ByExpressionRecordCount(final String expression, final Map<String, Object> parameters) throws Exception;	

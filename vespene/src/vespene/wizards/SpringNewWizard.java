@@ -131,17 +131,15 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 		
 		
 		final List<SpringServices> listSpringServices = page.getSelectedServices();
+		final List<SpringDefinitions> listSpringDefinitions = page.getSpringDefinitions();
+		
+		
 		final String serviceInterfacePackage   = page.getTextServiceInterfacePackage();
 				
 		
 		ProjectUtils projectUtils = new ProjectUtils();
 		IProject proj = projectUtils.getProject(selection);
 		
-		
-		System.out.println("perform setPersistentProperty");
-		
-		
-
 		
 		SpringPersistProperties springPersistProperties = new SpringPersistProperties(proj, listSpringServices);
 		springPersistProperties.storeSpringServices();
@@ -164,7 +162,7 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				
 				try {
-					doFinish(listSpringServices, serviceInterfacePackage, monitor);
+					doFinish(listSpringServices, listSpringDefinitions, serviceInterfacePackage, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -188,102 +186,64 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 
 
 	
-	private void doFinish(List<SpringServices> listSpringServices, String serviceInterfacePackage, IProgressMonitor monitor) throws CoreException {
+	private void doFinish(List<SpringServices> listSpringServices, List<SpringDefinitions> listSpringDefinitions, String serviceInterfacePackage, IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		
-		
 		
 		Utils utils = new Utils();
 		
 		
+		//ProjectUtils projectUtils = new ProjectUtils();
+		//IProject proj = projectUtils.getProject(selection);
 		
-		ProjectUtils projectUtils = new ProjectUtils();
-		IProject proj = projectUtils.getProject(selection);
-		
-		
-		String serviceInterfaceDir = "/testeJPA/src/"+utils.packageToDirectory( serviceInterfacePackage ); 
-		
-		String springServiceInterfacePattern = proj.getPersistentProperty(new QualifiedName("", "SpringServiceInterfacePattern"));
-		
-
-		SpringDefinitions springDefinitions = new SpringDefinitions();
-		
-		
-//		springDefinitions.setServiceInterfacePackage();
-//		springDefinitions.setServiceInterfaceTemplate();
-//		springDefinitions.setServiceInterfaceFilename();
-//
-//		springDefinitions.setServiceImplementationPackage();
-//		springDefinitions.setServiceImplementationTemplate();
-//		springDefinitions.setServiceImplementationFilename();
-//
-//		
-//		springDefinitions.setDaoInterfacePackage();
-//		springDefinitions.setDaoInterfaceTemplate();
-//		springDefinitions.setDaoInterfaceFilename();
-//		
-//		
-//		springDefinitions.setDaoImplementationPackage();
-//		springDefinitions.setDaoImplementationTemplate();
-//		springDefinitions.setDaoImplementationFilename();
-		
-		
-		
-        
-		ParseTemplate parseTemplate = new ParseTemplate();
-		
-		
-		
-		for(Iterator<SpringServices> it = listSpringServices.iterator(); it.hasNext(); ) {
-			SpringServices springService = (SpringServices) it.next();
+		for(Iterator<SpringDefinitions> itDef = listSpringDefinitions.iterator(); itDef.hasNext(); ) {
+			SpringDefinitions springDefinitions = (SpringDefinitions) itDef.next();
 			
-	        Map<String, String> mapRoot = new HashMap<String, String>();
-	        mapRoot.put("serviceName", springService.getServiceName() );
-	     
+			String dirOut = "/testeJPA/src/"+utils.packageToDirectory( springDefinitions.getPackage() ); 
+			String pattern = springDefinitions.getPattern();
 			
-			monitor.beginTask("Creating " + springService.getServiceName(), 2);
-
-			
-			IResource resource = root.findMember(new Path( serviceInterfaceDir ));
-			if (!resource.exists() || !(resource instanceof IContainer)) {
-				throwCoreException("Container \"" + utils.packageToDirectory( serviceInterfacePackage ) + "\" does not exist.");
-			}
-			IContainer container = (IContainer) resource;
-			
-			
-			
-			
-			
-			
-			String className = parseTemplate.loadTemplateFromString( springServiceInterfacePattern, mapRoot);
-			String fileName = parseTemplate.loadTemplateFromString( springServiceInterfacePattern, mapRoot)+".java";
-			
-			final IFile file = container.getFile(new Path( fileName ));
-			
-			try {
-				InputStream stream = genStpringContentStream(className, fileName, springService, serviceInterfacePackage);
-				if (file.exists()) {
-					file.setContents(stream, true, true, monitor);
-				} else {
-					file.create(stream, true, monitor);
+			ParseTemplate parseTemplate = new ParseTemplate();
+			for(Iterator<SpringServices> it = listSpringServices.iterator(); it.hasNext(); ) {
+				SpringServices springService = (SpringServices) it.next();
+				
+				
+		        Map<String, String> mapRoot = new HashMap<String, String>();
+		        mapRoot.put("serviceName", springService.getServiceName() );
+		     
+				monitor.beginTask("Creating " + springService.getServiceName(), 2);
+				
+				IResource resource = root.findMember(new Path( dirOut ));
+				if (!resource.exists() || !(resource instanceof IContainer)) {
+					throwCoreException("Container \"" + utils.packageToDirectory( springDefinitions.getPackage() ) + "\" does not exist.");
 				}
-				stream.close();
-			} catch (IOException e) {
-			}
-			monitor.worked(1);
-			
-			
-			
-
-		}	
+				IContainer container = (IContainer) resource;
+				
+				String className = parseTemplate.loadTemplateFromString( pattern, mapRoot);
+				String fileName = parseTemplate.loadTemplateFromString( pattern, mapRoot)+".java";
+				final IFile file = container.getFile(new Path( fileName ));
+				
+				try {
+					InputStream stream = genStpringContentStream(className, fileName, springService, springDefinitions.getPackage(), springDefinitions.getTemplateFile() );
+					if (file.exists()) {
+						file.setContents(stream, true, true, monitor);
+					} else {
+						file.create(stream, true, monitor);
+					}
+					stream.close();
+				} catch (IOException e) {
+				}
+				//monitor.worked(1);
+				
+			}	
+		}
 		
+		monitor.worked(1);
 
 	}
 	
 
 	
 
-	private InputStream genStpringContentStream(String className, String fileName, SpringServices springServices, String serviceInterfacePackage) {
+	private InputStream genStpringContentStream(String className, String fileName, SpringServices springServices, String Package, String templateFile) {
 		
 		ProjectUtils projectUtils = new ProjectUtils();
 		IProject proj = projectUtils.getProject(selection);
@@ -296,10 +256,10 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 		
 		
         Map<String, Object> mapRoot = new HashMap<String, Object>();
-        mapRoot.put("package", serviceInterfacePackage );
-        mapRoot.put("classname", className);
-       // mapRoot.put("EntityName", "entidade"); //springDef.getServiceName() );
+        mapRoot.put("package", Package );
+        mapRoot.put("classname", className); 
         mapRoot.put("SpringServices", springServices); //springDef.getServiceName() );
+        mapRoot.put("serviceName", springServices.getServiceName() );
         
         
         
@@ -318,8 +278,8 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 		ParseTemplate parseTemplate = new ParseTemplate();
 		String sourceCode = null;
 		try {
-			String springServiceInterfaceTemplateFile = proj.getPersistentProperty(new QualifiedName("", "SpringServiceInterfaceTemplateFile"));
-			sourceCode = parseTemplate.loadTemplateFromFile(utils.PluginPath()+"/templates", springServiceInterfaceTemplateFile, mapRoot);
+			//String springServiceInterfaceTemplateFile = proj.getPersistentProperty(new QualifiedName("", "SpringServiceInterfaceTemplateFile"));
+			sourceCode = parseTemplate.loadTemplateFromFile(utils.PluginPath()+"/templates", templateFile, mapRoot);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
