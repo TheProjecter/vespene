@@ -908,7 +908,7 @@ public class SpringNewWizardPage extends WizardPage {
 	
 	
 	
-	
+	/*
 	public List<SpringServices> getSelectedServices() {
         TableItem[] tableItem = tableSpringServices.getItems();
         List<SpringServices> listSpringDef = new ArrayList<SpringServices>();
@@ -943,14 +943,12 @@ public class SpringNewWizardPage extends WizardPage {
                 }            	
             	
             	
-            	
-            	
             	SpringServices springServices = new SpringServices();
 				springServices.setEntity(entityListLocal);
 				
 				springServices.setServiceName( item.getText(0) );
 				
-				/*
+				
 				springDef.setServiceInterfacePackage( textServiceInterfacePackage.getText() );
 				springDef.setServiceImplementationTemplate("");
 				springDef.setServiceImplementationFilename("");
@@ -966,7 +964,7 @@ public class SpringNewWizardPage extends WizardPage {
 				springDef.setDaoImplementationPackage( textDaoImplementationPackage.getText() );
 				springDef.setDaoImplementationTemplate("");
 				springDef.setDaoImplementationFilename("");
-				*/
+				
 				
 
 				listSpringDef.add(springServices);
@@ -976,6 +974,124 @@ public class SpringNewWizardPage extends WizardPage {
         return listSpringDef;
 		
 	}
+	*/
+	
+	
+	
+	
+	public List<SpringServices> getSelectedServices() {
+        TableItem[] tableItem = tableSpringServices.getItems();
+        List<SpringServices> listSpringDef = new ArrayList<SpringServices>();
+        
+		ProjectUtils projectUtils = new ProjectUtils();
+		IProject proj = projectUtils.getProject(selection);		
+        
+        
+  //      Utils utils = new Utils();
+        
+        
+        
+        try {
+			String serviceInterfacePackage = proj.getPersistentProperty(new QualifiedName("", "ServiceInterfacePackage"));
+	        String serviceInterfaceTemplateFile = proj.getPersistentProperty(new QualifiedName("", "SpringServiceInterfaceTemplateFile")); 
+	        String serviceInterfacePattern = proj.getPersistentProperty(new QualifiedName("", "SpringServiceInterfacePattern")); 
+			
+			
+	        String daoInterfacePackage = proj.getPersistentProperty(new QualifiedName("", "DaoInterfacePackage")); 
+	        String daoInterfaceTemplateFile = proj.getPersistentProperty(new QualifiedName("", "SpringJPADAOInterfaceTemplateFile")); 
+	        String daoInterfacePattern = proj.getPersistentProperty(new QualifiedName("", "SpringJPADAOInterfacePattern")); 
+			
+			
+	        String serviceImplementationPackage = proj.getPersistentProperty(new QualifiedName("", "ServiceImplementationPackage")); 
+	        String serviceImplementationTemplateFile = proj.getPersistentProperty(new QualifiedName("", "SpringServiceImplementationTemplateFile")); 
+	        String serviceImplementationPattern = proj.getPersistentProperty(new QualifiedName("", "SpringServiceImplementationPattern")); 
+			
+			
+	        String daoImplementationPackage = proj.getPersistentProperty(new QualifiedName("", "DaoImplementationPackage")); 
+	        String daoImplementationTemplateFile = proj.getPersistentProperty(new QualifiedName("", "SpringJPADAOImplementationTemplateFile")); 
+	        String daoImplementationPattern = proj.getPersistentProperty(new QualifiedName("", "SpringJPADAOImplementationPattern")); 
+
+        
+        
+	        for (int i = 0; i < tableItem.length; i++) {
+	            TableItem item = tableItem[i];
+	            if (item.getChecked()) {
+	            	
+	            	List<Entity> listEntity = new ArrayList<Entity>();
+	            	
+	                StringTokenizer cpTokenizer = new StringTokenizer(item.getText(1), ",");
+	                while ( cpTokenizer.hasMoreElements() ) {
+	                    String element = cpTokenizer.nextToken();
+	                    
+	                    System.out.println("entity string  "+element);
+	
+	        			for(Iterator<Entity> it = entityList.iterator(); it.hasNext(); ) {
+	        				Entity entity = (Entity) it.next();
+	        				
+	                        System.out.println("entity.getEntityName()  "+entity.getEntityName()+" - "+entity.getEntityName().equals(element) );        				
+	
+	        				if (entity.getEntityName().equals(element.trim())  ) {
+	        					System.out.println("       entity list  "+entity.getEntityName());
+	        					listEntity.add(entity);
+	        				}
+	
+	        			}            	
+	                    
+	
+	                }            	
+	            	
+	            	
+	            	SpringServices springServices = new SpringServices();
+					springServices.setEntity(listEntity);
+					
+					springServices.setServiceName( item.getText(0) );
+				
+					
+			        Map<String, String> mapRoot = new HashMap<String, String>();
+			        mapRoot.put("serviceName", item.getText(0) );
+			        ParseTemplate parseTemplate = new ParseTemplate();
+			        
+			        
+					springServices.setServiceInterfacePackage( serviceInterfacePackage );
+					springServices.setServiceInterfaceTemplateFile( serviceInterfaceTemplateFile );
+					springServices.setServiceInterfacePattern( serviceInterfacePattern );
+					springServices.setServiceInterfaceClassName( parseTemplate.loadTemplateFromString( serviceInterfacePattern, mapRoot) );
+					springServices.setServiceInterfaceFileName( springServices.getServiceInterfaceClassName()+".java" );
+					
+					
+					springServices.setDaoInterfacePackage( daoInterfacePackage );
+					springServices.setDaoInterfaceTemplateFile( daoInterfaceTemplateFile );
+					springServices.setDaoInterfacePattern( daoInterfacePattern );
+					springServices.setDaoInterfaceClassName( parseTemplate.loadTemplateFromString( daoInterfacePattern, mapRoot) );
+					springServices.setDaoInterfaceFileName( springServices.getDaoInterfaceClassName()+".java" );	
+					
+					
+					springServices.setServiceImplementationPackage( serviceImplementationPackage );
+					springServices.setServiceImplementationTemplateFile( serviceImplementationTemplateFile );
+					springServices.setServiceImplementationPattern( serviceImplementationPattern );
+					springServices.setServiceImplementationClassName( parseTemplate.loadTemplateFromString( serviceImplementationPattern, mapRoot) );
+					springServices.setServiceImplementationFileName( springServices.getServiceImplementationClassName()+".java" );
+					
+					springServices.setDaoImplementationPackage( daoImplementationPackage );
+					springServices.setDaoImplementationTemplateFile( daoImplementationTemplateFile );
+					springServices.setDaoImplementationPattern( daoImplementationPattern );
+					springServices.setDaoImplementationClassName( parseTemplate.loadTemplateFromString( daoImplementationPattern, mapRoot) );
+					springServices.setDaoImplementationFileName( springServices.getDaoImplementationClassName()+".java" );			
+					
+					listSpringDef.add(springServices);
+					
+	            }
+	        }
+        
+		} catch (CoreException e) {
+			e.printStackTrace();
+		} 
+        
+        
+        return listSpringDef;
+		
+	}
+	
 	
 	
 	
@@ -1116,7 +1232,7 @@ public class SpringNewWizardPage extends WizardPage {
 		return templateList;
 	}
 	
-	
+	/*
 	public List<SpringDefinitions> getSpringDefinitions() {
 		ProjectUtils projectUtils = new ProjectUtils();
 		IProject proj = projectUtils.getProject(selection);		
@@ -1135,6 +1251,7 @@ public class SpringNewWizardPage extends WizardPage {
 			springDefinitions.setPackage( proj.getPersistentProperty(new QualifiedName("", "ServiceImplementationPackage")) );
 			springDefinitions.setTemplateFile( proj.getPersistentProperty(new QualifiedName("", "SpringServiceImplementationTemplateFile")) );
 			springDefinitions.setPattern( proj.getPersistentProperty(new QualifiedName("", "SpringServiceImplementationPattern")) );
+			springDefinitions.setNestedDef(nestedDef);
 			listSpringDefinitions.add(springDefinitions);
 			
 			springDefinitions = new SpringDefinitions();			
@@ -1156,8 +1273,56 @@ public class SpringNewWizardPage extends WizardPage {
 		return listSpringDefinitions;
 		
 	}
+	*/
 
 
+	
+	public List<SpringDefinitions> getSpringDefinitions() {
+		SpringDefinitions springDefinitions;
+		SpringDefinitions springNestedDefinitions;
+		
+		ProjectUtils projectUtils = new ProjectUtils();
+		
+		
+		
+		IProject proj = projectUtils.getProject(selection);		
+		
+		List<SpringDefinitions> listSpringDefinitions = new ArrayList<SpringDefinitions>();
+		
+		//  
+		try {
+			springNestedDefinitions = new SpringDefinitions();
+			springNestedDefinitions.setPackage( proj.getPersistentProperty(new QualifiedName("", "ServiceInterfacePackage")) );
+			springNestedDefinitions.setTemplateFile( proj.getPersistentProperty(new QualifiedName("", "SpringServiceInterfaceTemplateFile")) );
+			springNestedDefinitions.setPattern( proj.getPersistentProperty(new QualifiedName("", "SpringServiceInterfacePattern")) );
+			
+			springDefinitions = new SpringDefinitions();
+			springDefinitions.setPackage( proj.getPersistentProperty(new QualifiedName("", "ServiceImplementationPackage")) );
+			springDefinitions.setTemplateFile( proj.getPersistentProperty(new QualifiedName("", "SpringServiceImplementationTemplateFile")) );
+			springDefinitions.setPattern( proj.getPersistentProperty(new QualifiedName("", "SpringServiceImplementationPattern")) );
+			springDefinitions.setSpringNestedDefinitions(springNestedDefinitions);
+			listSpringDefinitions.add(springDefinitions);
+
+			
+			springNestedDefinitions = new SpringDefinitions();			
+			springNestedDefinitions.setPackage( proj.getPersistentProperty(new QualifiedName("", "DaoInterfacePackage")) );
+			springNestedDefinitions.setTemplateFile( proj.getPersistentProperty(new QualifiedName("", "SpringJPADAOInterfaceTemplateFile")) );
+			springNestedDefinitions.setPattern( proj.getPersistentProperty(new QualifiedName("", "SpringJPADAOInterfacePattern")) );
+			
+			springDefinitions = new SpringDefinitions();			
+			springDefinitions.setPackage( proj.getPersistentProperty(new QualifiedName("", "DaoImplementationPackage")) );
+			springDefinitions.setTemplateFile( proj.getPersistentProperty(new QualifiedName("", "SpringJPADAOImplementationTemplateFile")) );
+			springDefinitions.setPattern( proj.getPersistentProperty(new QualifiedName("", "SpringJPADAOImplementationPattern")) );
+			springDefinitions.setSpringNestedDefinitions(springNestedDefinitions);
+			listSpringDefinitions.add(springDefinitions);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}		
+		
+	
+		return listSpringDefinitions;
+		
+	}
 
 
 

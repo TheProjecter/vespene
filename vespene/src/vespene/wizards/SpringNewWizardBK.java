@@ -67,7 +67,7 @@ import vespene.spring.SpringDefinitions;
 import vespene.spring.SpringServices;
 
 
-public class SpringNewWizard extends Wizard implements INewWizard {
+public class SpringNewWizardBK extends Wizard implements INewWizard {
 	private SpringNewWizardPage page;
 	private ISelection selection;
 	private List<Entity> entityList;
@@ -75,7 +75,7 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 	/**
 	 * Constructor for SampleNewWizard.
 	 */
-	public SpringNewWizard() {
+	public SpringNewWizardBK() {
 		super();
 		System.out.println("SpringNewWizard");
 		setNeedsProgressMonitor(true);
@@ -131,7 +131,7 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 		
 		
 		final List<SpringServices> listSpringServices = page.getSelectedServices();
-		//final List<SpringDefinitions> listSpringDefinitions = page.getSpringDefinitions();
+		final List<SpringDefinitions> listSpringDefinitions = page.getSpringDefinitions();
 		
 		
 		final String serviceInterfacePackage   = page.getTextServiceInterfacePackage();
@@ -162,7 +162,7 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				
 				try {
-					doFinish(listSpringServices, serviceInterfacePackage, monitor);
+					doFinish(listSpringServices, listSpringDefinitions, serviceInterfacePackage, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -243,177 +243,95 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 
 	
 	
-	private void doFinish(List<SpringServices> listSpringServices, String serviceInterfacePackage, IProgressMonitor monitor) throws CoreException {
+	private void doFinish(List<SpringServices> listSpringServices, List<SpringDefinitions> listSpringDefinitions, String serviceInterfacePackage, IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IResource resource = null;
-		IContainer container;
-		IFile file;
-		String srcDir;
-		Boolean isValidDir;
-
-		ProjectUtils projectUtils = new ProjectUtils();
-		IProject proj = projectUtils.getProject(selection);
 		
 		Utils utils = new Utils();
 		
-		List<String> listSourceFolder = utils.getSourceFolder(proj);
 		
-		monitor.beginTask("Creating Spring files" , listSpringServices.size());
+		//ProjectUtils projectUtils = new ProjectUtils();
+		//IProject proj = projectUtils.getProject(selection);
 		
-		for(Iterator<SpringServices> it = listSpringServices.iterator(); it.hasNext(); ) {
-			SpringServices springServices = (SpringServices) it.next();
-			
-			
-	        Map<String, String> mapRoot = new HashMap<String, String>();
-	        mapRoot.put("serviceName", springServices.getServiceName() );
-	     
-			//monitor.beginTask("Creating " + springServices.getServiceName(), 2);
-	        
-	        monitor.subTask("Creating service " + springServices.getServiceName());
-			
-			isValidDir = true;
-    		for(Iterator<String> itSrc = listSourceFolder.iterator(); itSrc.hasNext(); ) {
-    			srcDir = itSrc.next();
-    			
-    			
 
-    			
-				resource = root.findMember(new Path( srcDir+"/"+utils.packageToDirectory(springServices.getServiceInterfacePackage()) ));
-				if (!resource.exists() || !(resource instanceof IContainer)) {
-					isValidDir = false;
-					//throwCoreException("Container \"" + utils.packageToDirectory( springServices.getServiceInterfacePackage() ) + "\" does not exist.");
-				} else {
-					isValidDir = true;
-					break;
-				}
+			for(Iterator<SpringServices> it = listSpringServices.iterator(); it.hasNext(); ) {
+				SpringServices springService = (SpringServices) it.next();
 				
-			
-    		}	
-    		
-    		
-    		if (isValidDir) {
-				container = (IContainer) resource;
 				
-				file = container.getFile(new Path( springServices.getServiceInterfaceFileName() ));
+		        Map<String, String> mapRoot = new HashMap<String, String>();
+		        mapRoot.put("serviceName", springService.getServiceName() );
+		     
+				monitor.beginTask("Creating " + springService.getServiceName(), 2);
 				
-				try {
-					InputStream stream = genSpringContentStream(springServices, springServices.getServiceInterfaceTemplateFile() );
-					if (file.exists()) {
-						file.setContents(stream, true, true, monitor);
-					} else {
-						file.create(stream, true, monitor);
+				
+				for(Iterator<SpringDefinitions> itDef = listSpringDefinitions.iterator(); itDef.hasNext(); ) {
+					SpringDefinitions springDefinitions = (SpringDefinitions) itDef.next();
+					
+					
+					// gen interface
+					IResource resource = root.findMember(new Path( "/testeJPA/src/"+utils.packageToDirectory(springDefinitions.getSpringNestedDefinitions().getPackage()) ));
+					if (!resource.exists() || !(resource instanceof IContainer)) {
+						throwCoreException("Container \"" + utils.packageToDirectory( springDefinitions.getSpringNestedDefinitions().getPackage() ) + "\" does not exist.");
 					}
-					stream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}		    			
-    		}
- 
-    		
-			for(Iterator<String> itSrc = listSourceFolder.iterator(); itSrc.hasNext(); ) {
-    			String src = itSrc.next();
-
-				resource = root.findMember(new Path( src+"/"+utils.packageToDirectory(springServices.getServiceImplementationPackage() ) ));
-				if (!resource.exists() || !(resource instanceof IContainer)) {
-					isValidDir = false;
-					//throwCoreException("Container \"" + utils.packageToDirectory( springServices.getServiceImplementationPackage() ) + "\" does not exist.");
-				} else {
-					isValidDir = true;
-					break;
-				}
-    		}
+					IContainer container = (IContainer) resource;
+				
+					ParseTemplate parseTemplate = new ParseTemplate();
+					String classInterfaceName = parseTemplate.loadTemplateFromString( springDefinitions.getSpringNestedDefinitions().getPattern(), mapRoot);
+					String fileInterfaceName = parseTemplate.loadTemplateFromString( springDefinitions.getSpringNestedDefinitions().getPattern(), mapRoot)+".java";
+					IFile file = container.getFile(new Path( fileInterfaceName ));
+					
+					try {
+						InputStream stream = genSpringContentStream(classInterfaceName, 
+								fileInterfaceName, 
+								springService, 
+								springDefinitions.getSpringNestedDefinitions().getPackage(), 
+								springDefinitions.getSpringNestedDefinitions().getTemplateFile(), "" );
+						if (file.exists()) {
+							file.setContents(stream, true, true, monitor);
+						} else {
+							file.create(stream, true, monitor);
+						}
+						stream.close();
+					} catch (IOException e) {
+					}					
+					
+					
 			
-			if (isValidDir) {
-				container = (IContainer) resource;
-				
-				file = container.getFile(new Path( springServices.getServiceImplementationFileName() ));
-				
-				try {
-					InputStream stream = genSpringContentStream(springServices, springServices.getServiceImplementationTemplateFile() );
-					if (file.exists()) {
-						file.setContents(stream, true, true, monitor);
-					} else {
-						file.create(stream, true, monitor);
+					
+					// gen implementation
+					resource = root.findMember(new Path( "/testeJPA/src/"+utils.packageToDirectory(springDefinitions.getPackage()) ));
+					if (!resource.exists() || !(resource instanceof IContainer)) {
+						throwCoreException("Container \"" + utils.packageToDirectory( springDefinitions.getPackage() ) + "\" does not exist.");
 					}
-					stream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}					
-			}
-			
-			
-		
-			
-    		for(Iterator<String> itSrc = listSourceFolder.iterator(); itSrc.hasNext(); ) {
-    			String src = itSrc.next();
-    			
-				resource = root.findMember(new Path( src+"/"+utils.packageToDirectory(springServices.getDaoInterfacePackage() ) ));
-				if (!resource.exists() || !(resource instanceof IContainer)) {
-					isValidDir = false;
-					//throwCoreException("Container \"" + utils.packageToDirectory( springServices.getDaoInterfacePackage() ) + "\" does not exist.");
-				} else {
-					isValidDir = true;
-					break;
-				}
+					container = (IContainer) resource;
 				
-    		}
-    		
-    		if (isValidDir) {
-				container = (IContainer) resource;
-				
-				file = container.getFile(new Path( springServices.getDaoInterfaceFileName() ));
-				
-				try {
-					InputStream stream = genSpringContentStream(springServices, springServices.getDaoInterfaceTemplateFile() );
-					if (file.exists()) {
-						file.setContents(stream, true, true, monitor);
-					} else {
-						file.create(stream, true, monitor);
+					parseTemplate = new ParseTemplate();
+					String className = parseTemplate.loadTemplateFromString( springDefinitions.getPattern(), mapRoot);
+					String fileName = parseTemplate.loadTemplateFromString( springDefinitions.getPattern(), mapRoot)+".java";
+					file = container.getFile(new Path( fileName ));
+					
+					try {
+						InputStream stream = genSpringContentStream(className, 
+								fileName, 
+								springService, 
+								springDefinitions.getPackage(), 
+								springDefinitions.getTemplateFile(),
+								classInterfaceName );
+						if (file.exists()) {
+							file.setContents(stream, true, true, monitor);
+						} else {
+							file.create(stream, true, monitor);
+						}
+						stream.close();
+					} catch (IOException e) {
 					}
-					stream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}	
-    			
-    		}
-
-			
-    		for(Iterator<String> itSrc = listSourceFolder.iterator(); itSrc.hasNext(); ) {
-    			String src = itSrc.next();
-    
-				resource = root.findMember(new Path( src+"/"+utils.packageToDirectory(springServices.getDaoImplementationPackage() ) ));
-				if (!resource.exists() || !(resource instanceof IContainer)) {
-					isValidDir = false;
-					//throwCoreException("Container \"" + utils.packageToDirectory( springServices.getDaoImplementationPackage() ) + "\" does not exist.");
-				} else {
-					isValidDir = true;
-					break;
-				}					
-    		}
-    		
-    		if (isValidDir) {
-				container = (IContainer) resource;
+					//monitor.worked(1);
+					
+				}				
 				
-				file = container.getFile(new Path( springServices.getDaoImplementationFileName() ));
+				monitor.worked(1);
 				
-				try {
-					InputStream stream = genSpringContentStream(springServices, springServices.getDaoImplementationTemplateFile() );
-					if (file.exists()) {
-						file.setContents(stream, true, true, monitor);
-					} else {
-						file.create(stream, true, monitor);
-					}
-					stream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}		    			
-    		}
-			
-		
-    		monitor.worked(1);
-		}
-		
-		
+				
+			}	
 		
 		
 		
@@ -423,7 +341,7 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 	
 	
 
-	private InputStream genSpringContentStream(SpringServices springServices, String templateFile) {
+	private InputStream genSpringContentStream(String className, String fileName, SpringServices springServices, String Package, String templateFile, String classInterfaceName) {
 		
 		ProjectUtils projectUtils = new ProjectUtils();
 		IProject proj = projectUtils.getProject(selection);
@@ -435,18 +353,31 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 		
 		
 		
-		
         Map<String, Object> mapRoot = new HashMap<String, Object>();
-        mapRoot.put("serviceInterfacePackage", springServices.getServiceInterfacePackage() );
-        mapRoot.put("serviceInterfaceClassName", springServices.getServiceInterfaceClassName() ); 
+        mapRoot.put("package", Package );
+        mapRoot.put("classname", className); 
+        mapRoot.put("classInterfaceName", classInterfaceName);
         mapRoot.put("SpringServices", springServices); //springDef.getServiceName() );
         mapRoot.put("serviceName", springServices.getServiceName() );
         
         
+        
+        
+        
+//        springDef.get
+//        mapRoot.put("PkType",   ); //springDef.getServiceName() );
+        
+        
+        
+        //mapRoot.put("tablename", selectedTableName.substring(0, 1).toUpperCase() + selectedTableName.substring(1).toLowerCase());
+        
+        
+		
 		
 		ParseTemplate parseTemplate = new ParseTemplate();
 		String sourceCode = null;
 		try {
+			//String springServiceInterfaceTemplateFile = proj.getPersistentProperty(new QualifiedName("", "SpringServiceInterfaceTemplateFile"));
 			sourceCode = parseTemplate.loadTemplateFromFile(utils.PluginPath()+"/templates", templateFile, mapRoot);
 		} catch (Exception e) {
 			e.printStackTrace();

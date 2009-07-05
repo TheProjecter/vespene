@@ -4,8 +4,9 @@ import java.util.List;
 
 public class SpringDefinitions {
 	private String Package;
-	private String templateFile;
+	private String templateFile; 
 	private String pattern;
+	private SpringDefinitions springNestedDefinitions; 
 	
 	public String getPackage() {
 		return Package;
@@ -25,7 +26,13 @@ public class SpringDefinitions {
 	public void setPattern(String pattern) {
 		this.pattern = pattern;
 	}
-	
+	public SpringDefinitions getSpringNestedDefinitions() {
+		return springNestedDefinitions;
+	}
+	public void setSpringNestedDefinitions(SpringDefinitions springNestedDefinitions) {
+		this.springNestedDefinitions = springNestedDefinitions;
+	}
+
 //	private List<SpringServices> springServices;
 
 	
