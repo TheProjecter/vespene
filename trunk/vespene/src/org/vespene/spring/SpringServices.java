@@ -12,6 +12,7 @@ public class SpringServices {
 	private String serviceInterfacePattern;
 	private String serviceInterfaceClassName;
 	private String serviceInterfaceFileName;
+	private String serviceInterfaceSrcDir;
 	
 	
 	private String daoInterfacePackage;
@@ -19,6 +20,7 @@ public class SpringServices {
 	private String daoInterfacePattern;
 	private String daoInterfaceClassName;
 	private String daoInterfaceFileName;
+	private String daoInterfaceSrcDir;
 	
 	
 	private String serviceImplementationPackage;
@@ -26,6 +28,7 @@ public class SpringServices {
 	private String serviceImplementationPattern;
 	private String serviceImplementationClassName;
 	private String serviceImplementationFileName;
+	private String serviceImplementationSrcDir;
 	
 	
 	private String daoImplementationPackage;
@@ -33,6 +36,7 @@ public class SpringServices {
 	private String daoImplementationPattern;
 	private String daoImplementationClassName;
 	private String daoImplementationFileName;
+	private String daoImplementationSrcDir;
 	
 		
 	
@@ -306,6 +310,54 @@ public class SpringServices {
 
 	public void setDaoImplementationFileName(String daoImplementationFileName) {
 		this.daoImplementationFileName = daoImplementationFileName;
+	}
+
+
+
+	public String getServiceInterfaceSrcDir() {
+		return serviceInterfaceSrcDir;
+	}
+
+
+
+	public void setServiceInterfaceSrcDir(String serviceInterfaceSrcDir) {
+		this.serviceInterfaceSrcDir = serviceInterfaceSrcDir;
+	}
+
+
+
+	public String getDaoInterfaceSrcDir() {
+		return daoInterfaceSrcDir;
+	}
+
+
+
+	public void setDaoInterfaceSrcDir(String daoInterfaceSrcDir) {
+		this.daoInterfaceSrcDir = daoInterfaceSrcDir;
+	}
+
+
+
+	public String getServiceImplementationSrcDir() {
+		return serviceImplementationSrcDir;
+	}
+
+
+
+	public void setServiceImplementationSrcDir(String serviceImplementationSrcDir) {
+		this.serviceImplementationSrcDir = serviceImplementationSrcDir;
+	}
+
+
+
+	public String getDaoImplementationSrcDir() {
+		return daoImplementationSrcDir;
+	}
+
+
+
+	public void setDaoImplementationSrcDir(String daoImplementationSrcDir) {
+		this.daoImplementationSrcDir = daoImplementationSrcDir;
 	}
 
 

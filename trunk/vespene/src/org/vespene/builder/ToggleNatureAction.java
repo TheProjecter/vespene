@@ -1,5 +1,5 @@
 package org.vespene.builder;
-//
+
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;

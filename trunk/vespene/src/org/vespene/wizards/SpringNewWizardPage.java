@@ -987,8 +987,14 @@ public class SpringNewWizardPage extends WizardPage {
 		IProject proj = projectUtils.getProject(selection);		
         
         
-  //      Utils utils = new Utils();
-        
+		Utils utils = new Utils();
+		List<String> listSourceFolder = utils.getSourceFolder(proj);
+		
+		String srcDir = null;
+		for(Iterator<String> itSrc = listSourceFolder.iterator(); itSrc.hasNext(); ) {
+			srcDir = itSrc.next();
+			break;
+		}		
         
         
         try {
@@ -1023,15 +1029,15 @@ public class SpringNewWizardPage extends WizardPage {
 	                while ( cpTokenizer.hasMoreElements() ) {
 	                    String element = cpTokenizer.nextToken();
 	                    
-	                    System.out.println("entity string  "+element);
+	                    //System.out.println("entity string  "+element);
 	
 	        			for(Iterator<Entity> it = entityList.iterator(); it.hasNext(); ) {
 	        				Entity entity = (Entity) it.next();
 	        				
-	                        System.out.println("entity.getEntityName()  "+entity.getEntityName()+" - "+entity.getEntityName().equals(element) );        				
+	                        //System.out.println("entity.getEntityName()  "+entity.getEntityName()+" - "+entity.getEntityName().equals(element) );        				
 	
 	        				if (entity.getEntityName().equals(element.trim())  ) {
-	        					System.out.println("       entity list  "+entity.getEntityName());
+	        					//System.out.println("       entity list  "+entity.getEntityName());
 	        					listEntity.add(entity);
 	        				}
 	
@@ -1057,13 +1063,15 @@ public class SpringNewWizardPage extends WizardPage {
 					springServices.setServiceInterfacePattern( serviceInterfacePattern );
 					springServices.setServiceInterfaceClassName( parseTemplate.loadTemplateFromString( serviceInterfacePattern, mapRoot) );
 					springServices.setServiceInterfaceFileName( springServices.getServiceInterfaceClassName()+".java" );
+					springServices.setServiceInterfaceSrcDir(srcDir);
 					
 					
 					springServices.setDaoInterfacePackage( daoInterfacePackage );
 					springServices.setDaoInterfaceTemplateFile( daoInterfaceTemplateFile );
 					springServices.setDaoInterfacePattern( daoInterfacePattern );
 					springServices.setDaoInterfaceClassName( parseTemplate.loadTemplateFromString( daoInterfacePattern, mapRoot) );
-					springServices.setDaoInterfaceFileName( springServices.getDaoInterfaceClassName()+".java" );	
+					springServices.setDaoInterfaceFileName( springServices.getDaoInterfaceClassName()+".java" );
+					springServices.setDaoInterfaceSrcDir(srcDir);
 					
 					
 					springServices.setServiceImplementationPackage( serviceImplementationPackage );
@@ -1071,12 +1079,14 @@ public class SpringNewWizardPage extends WizardPage {
 					springServices.setServiceImplementationPattern( serviceImplementationPattern );
 					springServices.setServiceImplementationClassName( parseTemplate.loadTemplateFromString( serviceImplementationPattern, mapRoot) );
 					springServices.setServiceImplementationFileName( springServices.getServiceImplementationClassName()+".java" );
+					springServices.setServiceImplementationSrcDir(srcDir);
 					
 					springServices.setDaoImplementationPackage( daoImplementationPackage );
 					springServices.setDaoImplementationTemplateFile( daoImplementationTemplateFile );
 					springServices.setDaoImplementationPattern( daoImplementationPattern );
 					springServices.setDaoImplementationClassName( parseTemplate.loadTemplateFromString( daoImplementationPattern, mapRoot) );
-					springServices.setDaoImplementationFileName( springServices.getDaoImplementationClassName()+".java" );			
+					springServices.setDaoImplementationFileName( springServices.getDaoImplementationClassName()+".java" );
+					springServices.setDaoImplementationSrcDir(srcDir);
 					
 					listSpringDef.add(springServices);
 					
