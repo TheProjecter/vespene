@@ -8,16 +8,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,7 +24,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -37,35 +32,18 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
-import org.eclipse.ui.dialogs.ResourceSelectionDialog;
-import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.vespene.dao.DBConnection;
-import org.vespene.daoh2.project.ProjectMetadata;
 import org.vespene.daoh2.project.ProjectTemplatesDao;
 import org.vespene.daoh2.template.TemplateDefsDao;
-import org.vespene.orm.Db;
-import org.vespene.orm.Relations;
 import org.vespene.orm.Template;
-import org.vespene.project.ProjectUtils;
 import org.vespene.project.Utils;
 
 
 public class VespenePropertyPage extends PropertyPage {
-
-	private static final String PATH_TITLE = "Path:";
-
-
-	
-	private Text ownerText;
-	
-	
-	
 	private Text textDriverClassPath;
 	private Text textDriverClass;
 	private Text textDatabaseURL;
@@ -440,13 +418,7 @@ public class VespenePropertyPage extends PropertyPage {
 		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
 		
-		//GridData data = new GridData(GridData.FILL);
-		//data.grabExcessHorizontalSpace = true;
-		//data.horizontalAlignment = GridData.FILL;
-		//composite.setLayoutData(data);
 
-		//addFirstSection(composite);
-		//addSeparator(composite);
 		addSecondSection(composite);
 		return composite;
 	}

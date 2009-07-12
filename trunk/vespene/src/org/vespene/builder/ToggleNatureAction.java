@@ -1,6 +1,7 @@
 package org.vespene.builder;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -12,6 +13,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.vespene.daoh2.project.ProjectMetadata;
+import org.vespene.project.AnnotationsUtils;
+import org.vespene.properties.SpringProperties;
+import org.vespene.spring.Entity;
+import org.vespene.spring.SpringDefinitions;
+import org.vespene.spring.SpringServices;
 
 
 
@@ -94,6 +100,28 @@ public class ToggleNatureAction implements IObjectActionDelegate {
 			description.setNatureIds(newNatures);
 			project.setDescription(description, null);
 			
+			
+			SpringProperties springProperties = new SpringProperties( project );
+			SpringDefinitions springDefinitions = springProperties.loadSpringDefinitions();
+			
+			
+			//textServiceNamePattern.setText( (springDefinitions.getServiceNamePattern()!=null) ? springDefinitions.getServiceNamePattern() : "s${EntityName}" );
+			
+			springDefinitions.setServiceNamePattern( "s${EntityName}" );
+			
+			springDefinitions.setServiceInterfacePattern( "I${serviceName}Service" ); 
+			springDefinitions.setServiceInterfaceTemplateFile( "springServiceInter.ftl" ); 
+			
+			springDefinitions.setServiceImplementationPattern( "${serviceName}SpringService" );
+			springDefinitions.setServiceImplementationTemplateFile( "springServiceImpl.ftl" );
+			
+			springDefinitions.setDaoInterfacePattern( "I${serviceName}Dao" ); 
+			springDefinitions.setDaoInterfaceTemplateFile( "springJpaDAOInter.ftl" ); 
+			
+			springDefinitions.setDaoImplementationPattern( "${serviceName}JPADao" ); 
+			springDefinitions.setDaoImplementationTemplateFile( "springJpaDAOImpl.ftl" ); 
+			
+			springProperties.storeSpringDefinitions(springDefinitions);
 			
 			
 			String fullPath = project.getLocation().toString()+"/.vespene/vespenedb";		

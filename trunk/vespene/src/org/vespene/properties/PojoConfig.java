@@ -18,7 +18,6 @@ public class PojoConfig {
 	
 	
 	public PojoConfig() {
-		System.out.println("PojoConfig****************");
 		//super();
 	}
 
