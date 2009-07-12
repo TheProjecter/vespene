@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ${SpringServices.serviceInterfacePackage}.${SpringServices.serviceInterfaceClassName};
-import ${SpringServices.daoImplementationPackage}.${SpringServices.daoImplementationClassName};
+import ${SpringServices.daoInterfacePackage}.${SpringServices.daoInterfaceClassName};
 
 <#list SpringServices.entity as entity>
 import ${entity.entityPackage};
@@ -26,7 +26,7 @@ public class ${SpringServices.serviceImplementationClassName} implements ${Sprin
 
 
 	@Autowired
-	private ${SpringServices.daoImplementationClassName} dao; 
+	private ${SpringServices.daoInterfaceClassName} dao; 
 	
 	private static final String SERVICE_BEAN_ID = "${SpringServices.serviceName}";	
 	
@@ -127,11 +127,11 @@ public class ${SpringServices.serviceImplementationClassName} implements ${Sprin
 
 </#list>
 
-	public ${SpringServices.daoImplementationClassName} getDao() {
+	public ${SpringServices.daoInterfaceClassName} getDao() {
 		return dao;
 	}
 
-	public void setDao(${SpringServices.daoImplementationClassName} dao) {
+	public void setDao(${SpringServices.daoInterfaceClassName} dao) {
 		this.dao = dao;
 	}  		
 

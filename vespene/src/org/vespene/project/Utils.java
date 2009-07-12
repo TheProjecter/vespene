@@ -80,10 +80,6 @@ public class Utils {
 	public static void copyFromPlugin(final IPath src, final IFile dest)
 			throws CoreException {
 		try {
-			
-			System.out.println( "src.toFile().getAbsolutePath() "+src.toFile().getAbsolutePath() );
-			System.out.println( "dest.getFullPath().toFile()    "+dest.getFullPath().toFile().getAbsolutePath() );
-			
 			final Bundle bundle = ResourcesPlugin.getPlugin().getBundle(); // InfoglueConnectorPlugin.getDefault().getBundle();
 			final InputStream in = FileLocator.openStream(bundle, src, false);
 			dest.create(in, true, null);
