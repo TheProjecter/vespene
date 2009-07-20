@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
@@ -24,6 +25,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.datatools.connectivity.IConnectionProfile;
+import org.eclipse.datatools.connectivity.ProfileManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
@@ -144,15 +147,21 @@ public class SmartNewWizardPage extends WizardPage {
 	 * @see IDialogPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-		//display = new Display();
+		ProfileManager pf = new ProfileManager();
+		IConnectionProfile[] gp = pf.getProfiles();
+		System.out.println( "gp[0].getProviderName() "+gp[0].getProviderName() );
+		System.out.println( "gp[0].getProviderName() "+gp[0].getName() );
+		@SuppressWarnings("unused")
+		Properties aa = gp[0].getBaseProperties();
+		//gp[0].createConnection(arg0);
+  	    //aa = org.eclipse.datatools.connectivity.internal.ui.DriverListCombo; 
+		//IConnectionProfile[] databaseProfiles = ProfileManager.getProfilesByCategory("org.eclipse.datatools.connectivity.db.category"); 
 		
-		//final Display display = new Display();
+		
 		
 		System.out.println("VepeneNewwizardPage createControl");
 		
-		//DBConnection dbconn = new DBConnection();
-		//dbconn.getConnection();
-		
+
 		
 		
 		TablesDao tablesDao = new TablesDao(connection);

@@ -32,8 +32,6 @@ public class ${SpringServices.daoImplementationClassName} implements ${SpringSer
 		super();
 	}
 
-
-
 <#list SpringServices.entity as entity>
 	
 	@Override
@@ -81,34 +79,6 @@ public class ${SpringServices.daoImplementationClassName} implements ${SpringSer
 		return Integer.valueOf( query.getResultList().get(0).toString() );		
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<${entity.entityName}> findByNamedQuery(String queryName) {
-		return entityManager.createNamedQuery(queryName).getResultList();
-	}	
-	
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<${entity.entityName}> findByNamedQuery(String queryName, String[] paramNames, Object[] paramValues) {
-		if (paramNames.length != paramValues.length) {
-			throw new IllegalArgumentException();
-		}
-		Map<String, Object> map = new java.util.HashMap<String, Object>(paramNames.length);
-		for (int i = 0; i < paramNames.length; ++i) {
-			map.put(paramNames[i], paramValues[i]);
-		}
-		
-		Query queryObject = entityManager.createNamedQuery(queryName);
-		if (map != null) {
-			for (Map.Entry<String, ?> entry : map.entrySet()) {
-				queryObject.setParameter(entry.getKey(), entry.getValue());
-			}
-		}
-		
-		return queryObject.getResultList();				
-	}
-
 	@Override
 	public void persist${entity.entityName}(${entity.entityName} ${entity.entityName?lower_case}) {
 		entityManager.persist(${entity.entityName?lower_case});
@@ -126,6 +96,34 @@ public class ${SpringServices.daoImplementationClassName} implements ${SpringSer
 			entityManager.remove(entityManager.merge(${entity.entityName?lower_case}));
 		}
 	}
-</#list>  		
+</#list>  
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List findByNamedQuery(String queryName) {
+		return entityManager.createNamedQuery(queryName).getResultList();
+	}	
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List findByNamedQuery(String queryName, String[] paramNames, Object[] paramValues) {
+		if (paramNames.length != paramValues.length) {
+			throw new IllegalArgumentException();
+		}
+		Map<String, Object> map = new java.util.HashMap<String, Object>(paramNames.length);
+		for (int i = 0; i < paramNames.length; ++i) {
+			map.put(paramNames[i], paramValues[i]);
+		}
+		
+		Query queryObject = entityManager.createNamedQuery(queryName);
+		if (map != null) {
+			for (Map.Entry<String, ?> entry : map.entrySet()) {
+				queryObject.setParameter(entry.getKey(), entry.getValue());
+			}
+		}
+		
+		return queryObject.getResultList();				
+	}		
 
 }

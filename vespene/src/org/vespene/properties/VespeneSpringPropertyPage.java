@@ -19,7 +19,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.vespene.spring.SpringDefinitions;
+import org.vespene.spring.model.SpringDefinitions;
 
 
 public class VespeneSpringPropertyPage extends PropertyPage {

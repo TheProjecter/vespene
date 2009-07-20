@@ -20,7 +20,7 @@ import javassist.bytecode.FieldInfo;
 import javassist.bytecode.annotation.Annotation;
 
 import org.apache.commons.io.FileUtils;
-import org.vespene.spring.Entity;
+import org.vespene.spring.model.Entity;
 
 
 
@@ -362,9 +362,9 @@ public class AnnotationsUtils {
 		Utils utils = new Utils();
 		
 		for (Iterator<File> iter = ormClassFiles.iterator(); iter.hasNext();) {
-			File entityFile = iter.next();
+			File entityClassFile = iter.next();
 			
-			File f = new File(entityFile.getAbsolutePath());
+			File f = new File(entityClassFile.getAbsolutePath());
 			InputStream is = null;
 			try {
 				is = new FileInputStream(f);
@@ -398,9 +398,9 @@ public class AnnotationsUtils {
 				    	 Entity entity = new Entity();
 				    	 entity.setEntityName( className.substring( className.lastIndexOf(".")+1 ) );
 				    	 entity.setEntityPackage( className );
-				    	 entity.setAbsolutePath( entityFile.getAbsolutePath() );
+				    	 entity.setAbsolutePath( entityClassFile.getAbsolutePath() );
 				    	 
-		
+				    	 
 				    	 List listFields = cf.getFields();
 				    	 
 				    	 for(Iterator<FieldInfo> it = listFields.iterator(); it.hasNext(); ) {

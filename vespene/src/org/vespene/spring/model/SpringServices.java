@@ -1,33 +1,59 @@
-package org.vespene.spring;
+package org.vespene.spring.model;
 
 import java.util.List;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.Root;
+
+@Root
 public class SpringServices {
-	private String ServiceName;
+	@Element(required=false)
+	private String serviceName;
+	@Element(required=false)
+	private Boolean isCustom;
+	@Element(required=false)
+	private Boolean enable;
 	
+	
+	
+	@ElementList(required=false, inline=true)
 	private List<Entity> entity;
 	
+	@Element(required=false)
 	private String serviceInterfacePackage;
+	@Element(required=false)
 	private String serviceInterfaceClassName;
+	@Element(required=false)
 	private String serviceInterfaceFileName;
+	@Element(required=false)
 	private String serviceInterfaceSrcDir;
 	
-	
+	@Element(required=false)
 	private String daoInterfacePackage;
+	@Element(required=false)
 	private String daoInterfaceClassName;
+	@Element(required=false)
 	private String daoInterfaceFileName;
+	@Element(required=false)
 	private String daoInterfaceSrcDir;
 	
-	
+	@Element(required=false)
 	private String serviceImplementationPackage;
+	@Element(required=false)
 	private String serviceImplementationClassName;
+	@Element(required=false)
 	private String serviceImplementationFileName;
+	@Element(required=false)
 	private String serviceImplementationSrcDir;
 	
-	
+	@Element(required=false)
 	private String daoImplementationPackage;
+	@Element(required=false)
 	private String daoImplementationClassName;
+	@Element(required=false)
 	private String daoImplementationFileName;
+	@Element(required=false)
 	private String daoImplementationSrcDir;
 	
 		
@@ -39,13 +65,37 @@ public class SpringServices {
 
 
 	public String getServiceName() {
-		return ServiceName;
+		return serviceName;
 	}
 
 
 
 	public void setServiceName(String serviceName) {
-		ServiceName = serviceName;
+		this.serviceName = serviceName;
+	}
+
+
+
+	public Boolean getIsCustom() {
+		return isCustom;
+	}
+
+
+
+	public void setIsCustom(Boolean isCustom) {
+		this.isCustom = isCustom;
+	}
+
+
+
+	public Boolean getEnable() {
+		return enable;
+	}
+
+
+
+	public void setEnable(Boolean enable) {
+		this.enable = enable;
 	}
 
 
@@ -253,7 +303,6 @@ public class SpringServices {
 	public void setDaoImplementationSrcDir(String daoImplementationSrcDir) {
 		this.daoImplementationSrcDir = daoImplementationSrcDir;
 	}
-
 
 
 

@@ -31,13 +31,18 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -49,14 +54,14 @@ import org.vespene.project.AnnotationsUtils;
 import org.vespene.project.ProjectUtils;
 import org.vespene.project.Utils;
 import org.vespene.properties.SpringProperties;
-import org.vespene.spring.Entity;
-import org.vespene.spring.SpringDefinitions;
-import org.vespene.spring.SpringServices;
+import org.vespene.spring.model.Entity;
+import org.vespene.spring.model.SpringDefinitions;
+import org.vespene.spring.model.SpringServices;
 
 
 
 
-public class SpringNewWizardPage extends WizardPage {
+public class SpringNewWizardPage extends WizardPage  {
 	List<Entity> entityList;
 	
 	private Group group1;
@@ -204,8 +209,8 @@ public class SpringNewWizardPage extends WizardPage {
 				
 				button12.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						CustomSpringService customSpringService = new CustomSpringService();
-						customSpringService.show(p, entityList); //   show(p,entityList);
+						CustomSpringService customSpringService = new CustomSpringService(tableSpringServices, entityList);
+						customSpringService.show(p); 
 					}
 				});					
 				
@@ -217,12 +222,23 @@ public class SpringNewWizardPage extends WizardPage {
 				//button13.setText("Edit");
 				
 				image = new Image(parent.getDisplay(), getClass().getResourceAsStream("/icons/remove_correction.gif") );
-				button13.setImage(image);	
+				button13.setImage(image);
 				
-				button13.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-					}
-				});					
+				button13.addListener(SWT.Selection, new Listener() {
+			        public void handleEvent(Event event) {
+			        	TableItem item = tableSpringServices.getItem(tableSpringServices.getSelectionIndex());
+			        	if ( Boolean.parseBoolean(item.getText(2)) ) {
+			        		tableSpringServices.remove(tableSpringServices.getSelectionIndices());
+			        	}
+			        }
+			      });				
+				
+				
+//				button13.addSelectionListener(new SelectionAdapter() {
+//					public void widgetSelected(SelectionEvent e) {
+//						
+//					}
+//				});					
 				
 				
 				
@@ -247,6 +263,13 @@ public class SpringNewWizardPage extends WizardPage {
 				
 				table1LData.grabExcessHorizontalSpace = true;
 				
+				
+//			    final TableViewer tv = new TableViewer(group1, SWT.FULL_SELECTION);
+//			    tv.setContentProvider(new SpringServicesContentProvider());
+//			    tv.setLabelProvider(new SpringServicesLabelProvider());
+//				tableSpringServices = tv.getTable(); // new Table(group1, SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
+				
+				
 				tableSpringServices = new Table(group1, SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
 				tableSpringServices.setLayoutData(table1LData);
 				tableSpringServices.setHeaderVisible(true);
@@ -260,7 +283,7 @@ public class SpringNewWizardPage extends WizardPage {
 					tableColumn1.setText("Service name");
 					tableColumn1.setWidth(150);
 					tableColumn1.setResizable(false);
-					tableColumn1.setData(tableSpringServices);
+					//tableColumn1.setData(tableSpringServices);
 					
 				}				
 				
@@ -269,9 +292,18 @@ public class SpringNewWizardPage extends WizardPage {
 					tableColumn1.setText("Entity");
 					tableColumn1.setWidth(200);
 					tableColumn1.setResizable(false);
-					tableColumn1.setData(tableSpringServices);
+					//tableColumn1.setData(tableSpringServices);
 					
 				}
+				
+				{
+					tableColumn1 = new TableColumn(tableSpringServices, SWT.NONE);
+					tableColumn1.setText("Custom");
+					tableColumn1.setWidth(0);
+					tableColumn1.setResizable(false);
+					//tableColumn1.setData(tableSpringServices);
+					
+				}				
 
 
 				
@@ -607,8 +639,8 @@ public class SpringNewWizardPage extends WizardPage {
         }
         
 
-		SpringProperties springPersistProperties = new SpringProperties(proj);
-		SpringDefinitions springDefinitions  = springPersistProperties.loadSpringDefinitions();
+		SpringProperties springProperties = new SpringProperties(proj);
+		SpringDefinitions springDefinitions  = springProperties.loadSpringDefinitions();
 		
 		
 		springDefinitions.setServiceNamePattern( textServiceNamePattern.getText() );
@@ -616,7 +648,7 @@ public class SpringNewWizardPage extends WizardPage {
 		springDefinitions.setServiceImplementationPackage( textServiceImplementationPackage.getText() );
 		springDefinitions.setDaoInterfacePackage( textDaoInterfacePackage.getText() );
 		springDefinitions.setDaoImplementationPackage( textDaoImplementationPackage.getText() );
-		springPersistProperties.storeSpringDefinitions(springDefinitions);		
+		springProperties.storeSpringDefinitions(springDefinitions);		
 		
 		updateStatus(null);
 	}
@@ -639,16 +671,15 @@ public class SpringNewWizardPage extends WizardPage {
         for (int i = 0; i < tableItem.length; i++) {
             TableItem item = tableItem[i];
             
-            
-	        Map<String, String> mapRoot = new HashMap<String, String>();
-	        mapRoot.put("EntityName", item.getText(1));
-	        
-	        ParseTemplate parseTemplate = new ParseTemplate();
-	        String serviceName = parseTemplate.loadTemplateFromString(textServiceNamePattern.getText(), mapRoot);
-			
- 
-	        item.setText(0, serviceName);
-	        
+            if ( !Boolean.parseBoolean(item.getText(2)) ) {
+    	        Map<String, String> mapRoot = new HashMap<String, String>();
+    	        mapRoot.put("EntityName", item.getText(1));
+    	        
+    	        ParseTemplate parseTemplate = new ParseTemplate();
+    	        String serviceName = parseTemplate.loadTemplateFromString(textServiceNamePattern.getText(), mapRoot);
+    			
+    	        item.setText(0, serviceName);
+            }
         }
 		
 		dialogChanged();
@@ -684,7 +715,7 @@ public class SpringNewWizardPage extends WizardPage {
 		
         for (int i = 0; i < tableItem.length; i++) {
             TableItem item = tableItem[i];
-            if (item.getChecked()) {
+         
             	
             	List<Entity> listEntity = new ArrayList<Entity>();
             	
@@ -714,6 +745,8 @@ public class SpringNewWizardPage extends WizardPage {
 				springServices.setEntity(listEntity);
 				
 				springServices.setServiceName( item.getText(0) );
+				springServices.setEnable( item.getChecked() );
+		        springServices.setIsCustom( Boolean.parseBoolean(item.getText(2)) );
 			
 				
 		        Map<String, String> mapRoot = new HashMap<String, String>();
@@ -725,7 +758,6 @@ public class SpringNewWizardPage extends WizardPage {
 				springServices.setServiceInterfaceClassName( parseTemplate.loadTemplateFromString( springDefinitions.getServiceInterfacePattern(), mapRoot) );
 				springServices.setServiceInterfaceFileName( springServices.getServiceInterfaceClassName()+".java" );
 				springServices.setServiceInterfaceSrcDir(srcDir);
-				
 				
 				springServices.setDaoInterfacePackage( springDefinitions.getDaoInterfacePackage() );
 				springServices.setDaoInterfaceClassName( parseTemplate.loadTemplateFromString( springDefinitions.getDaoInterfacePattern(), mapRoot) );
@@ -746,7 +778,7 @@ public class SpringNewWizardPage extends WizardPage {
 				listSpringServices.add(springServices);
 				
             }
-        }
+     
         
 
         
@@ -766,101 +798,199 @@ public class SpringNewWizardPage extends WizardPage {
 	
 	
 	
-	public SpringDefinitions getSelectedServices() {
-        TableItem[] tableItem = tableSpringServices.getItems();
-        List<SpringServices> listSpringServices = new ArrayList<SpringServices>();
-        
-		ProjectUtils projectUtils = new ProjectUtils();
-		IProject proj = projectUtils.getProject(selection);		
-        
-        
-		Utils utils = new Utils();
-		List<String> listSourceFolder = utils.getSourceFolder(proj);
-		
-		String srcDir = null;
-		for(Iterator<String> itSrc = listSourceFolder.iterator(); itSrc.hasNext(); ) {
-			srcDir = itSrc.next();
-			break;
-		}
-		
-		
-		
-		SpringProperties springPersistProperties = new SpringProperties(proj);
-		SpringDefinitions springDefinitions  = springPersistProperties.loadSpringDefinitions();
-		
-        for (int i = 0; i < tableItem.length; i++) {
-            TableItem item = tableItem[i];
-            if (item.getChecked()) {
-            	
-            	List<Entity> listEntity = new ArrayList<Entity>();
-            	
-                StringTokenizer cpTokenizer = new StringTokenizer(item.getText(1), ",");
-                while ( cpTokenizer.hasMoreElements() ) {
-                    String element = cpTokenizer.nextToken();
-                    
-                    //System.out.println("entity string  "+element);
-
-        			for(Iterator<Entity> it = entityList.iterator(); it.hasNext(); ) {
-        				Entity entity = (Entity) it.next();
-        				
-                        //System.out.println("entity.getEntityName()  "+entity.getEntityName()+" - "+entity.getEntityName().equals(element) );        				
-
-        				if (entity.getEntityName().equals(element.trim())  ) {
-        					//System.out.println("       entity list  "+entity.getEntityName());
-        					listEntity.add(entity);
-        				}
-
-        			}            	
-                    
-
-                }            	
-            	
-            	
-            	SpringServices springServices = new SpringServices();
-				springServices.setEntity(listEntity);
-				
-				springServices.setServiceName( item.getText(0) );
-			
-				
-		        Map<String, String> mapRoot = new HashMap<String, String>();
-		        mapRoot.put("serviceName", item.getText(0) );
-		        ParseTemplate parseTemplate = new ParseTemplate();
-		        
-		        
-				springServices.setServiceInterfacePackage( springDefinitions.getServiceInterfacePackage() );
-				springServices.setServiceInterfaceClassName( parseTemplate.loadTemplateFromString( springDefinitions.getServiceInterfacePattern(), mapRoot) );
-				springServices.setServiceInterfaceFileName( springServices.getServiceInterfaceClassName()+".java" );
-				springServices.setServiceInterfaceSrcDir(srcDir);
-				
-				
-				springServices.setDaoInterfacePackage( springDefinitions.getDaoInterfacePackage() );
-				springServices.setDaoInterfaceClassName( parseTemplate.loadTemplateFromString( springDefinitions.getDaoInterfacePattern(), mapRoot) );
-				springServices.setDaoInterfaceFileName( springServices.getDaoInterfaceClassName()+".java" );
-				springServices.setDaoInterfaceSrcDir(srcDir);
-				
-				
-				springServices.setServiceImplementationPackage( springDefinitions.getServiceImplementationPackage() );
-				springServices.setServiceImplementationClassName( parseTemplate.loadTemplateFromString( springDefinitions.getServiceImplementationPattern(), mapRoot) );
-				springServices.setServiceImplementationFileName( springServices.getServiceImplementationClassName()+".java" );
-				springServices.setServiceImplementationSrcDir(srcDir);
-				
-				springServices.setDaoImplementationPackage( springDefinitions.getDaoImplementationPackage() );
-				springServices.setDaoImplementationClassName( parseTemplate.loadTemplateFromString( springDefinitions.getDaoImplementationPattern(), mapRoot) );
-				springServices.setDaoImplementationFileName( springServices.getDaoImplementationClassName()+".java" );
-				springServices.setDaoImplementationSrcDir(srcDir);
-				
-				listSpringServices.add(springServices);
-				
-            }
-        }
-        
-
-        
-		springDefinitions.setSpringServices(listSpringServices);
-        
-		return springDefinitions;
-		
-	}	
+//	public SpringDefinitions getSelectedServices() {
+//        TableItem[] tableItem = tableSpringServices.getItems();
+//        List<SpringServices> listSpringServices = new ArrayList<SpringServices>();
+//        
+//		ProjectUtils projectUtils = new ProjectUtils();
+//		IProject proj = projectUtils.getProject(selection);		
+//        
+//        
+//		Utils utils = new Utils();
+//		List<String> listSourceFolder = utils.getSourceFolder(proj);
+//		
+//		String srcDir = null;
+//		for(Iterator<String> itSrc = listSourceFolder.iterator(); itSrc.hasNext(); ) {
+//			srcDir = itSrc.next();
+//			break;
+//		}
+//		
+//		
+//		
+//		SpringProperties springPersistProperties = new SpringProperties(proj);
+//		SpringDefinitions springDefinitions  = springPersistProperties.loadSpringDefinitions();
+//		
+//        for (int i = 0; i < tableItem.length; i++) {
+//            TableItem item = tableItem[i];
+//            if (item.getChecked()) {
+//            	
+//            	List<Entity> listEntity = new ArrayList<Entity>();
+//            	
+//                StringTokenizer cpTokenizer = new StringTokenizer(item.getText(1), ",");
+//                while ( cpTokenizer.hasMoreElements() ) {
+//                    String element = cpTokenizer.nextToken();
+//                    
+//                    //System.out.println("entity string  "+element);
+//
+//        			for(Iterator<Entity> it = entityList.iterator(); it.hasNext(); ) {
+//        				Entity entity = (Entity) it.next();
+//        				
+//                        //System.out.println("entity.getEntityName()  "+entity.getEntityName()+" - "+entity.getEntityName().equals(element) );        				
+//
+//        				if (entity.getEntityName().equals(element.trim())  ) {
+//        					//System.out.println("       entity list  "+entity.getEntityName());
+//        					listEntity.add(entity);
+//        				}
+//
+//        			}            	
+//                    
+//
+//                }            	
+//            	
+//            	
+//            	SpringServices springServices = new SpringServices();
+//				springServices.setEntity(listEntity);
+//				
+//				springServices.setServiceName( item.getText(0) );
+//			
+//				
+//		        Map<String, String> mapRoot = new HashMap<String, String>();
+//		        mapRoot.put("serviceName", item.getText(0) );
+//		        ParseTemplate parseTemplate = new ParseTemplate();
+//		        
+//		        
+//				springServices.setServiceInterfacePackage( springDefinitions.getServiceInterfacePackage() );
+//				springServices.setServiceInterfaceClassName( parseTemplate.loadTemplateFromString( springDefinitions.getServiceInterfacePattern(), mapRoot) );
+//				springServices.setServiceInterfaceFileName( springServices.getServiceInterfaceClassName()+".java" );
+//				springServices.setServiceInterfaceSrcDir(srcDir);
+//				
+//				
+//				springServices.setDaoInterfacePackage( springDefinitions.getDaoInterfacePackage() );
+//				springServices.setDaoInterfaceClassName( parseTemplate.loadTemplateFromString( springDefinitions.getDaoInterfacePattern(), mapRoot) );
+//				springServices.setDaoInterfaceFileName( springServices.getDaoInterfaceClassName()+".java" );
+//				springServices.setDaoInterfaceSrcDir(srcDir);
+//				
+//				
+//				springServices.setServiceImplementationPackage( springDefinitions.getServiceImplementationPackage() );
+//				springServices.setServiceImplementationClassName( parseTemplate.loadTemplateFromString( springDefinitions.getServiceImplementationPattern(), mapRoot) );
+//				springServices.setServiceImplementationFileName( springServices.getServiceImplementationClassName()+".java" );
+//				springServices.setServiceImplementationSrcDir(srcDir);
+//				
+//				springServices.setDaoImplementationPackage( springDefinitions.getDaoImplementationPackage() );
+//				springServices.setDaoImplementationClassName( parseTemplate.loadTemplateFromString( springDefinitions.getDaoImplementationPattern(), mapRoot) );
+//				springServices.setDaoImplementationFileName( springServices.getDaoImplementationClassName()+".java" );
+//				springServices.setDaoImplementationSrcDir(srcDir);
+//				
+//				listSpringServices.add(springServices);
+//				
+//            }
+//        }
+//        
+//
+//        
+//		springDefinitions.setSpringServices(listSpringServices);
+//        
+//		return springDefinitions;
+//		
+//	}	
+	
+	
+	
+//	public SpringDefinitions getSelectedServices() {
+//        TableItem[] tableItem = tableSpringServices.getItems();
+//        List<SpringServices> listSpringServices = new ArrayList<SpringServices>();
+//        
+//		ProjectUtils projectUtils = new ProjectUtils();
+//		IProject proj = projectUtils.getProject(selection);		
+//        
+//        
+//		Utils utils = new Utils();
+//		List<String> listSourceFolder = utils.getSourceFolder(proj);
+//		
+//		String srcDir = null;
+//		for(Iterator<String> itSrc = listSourceFolder.iterator(); itSrc.hasNext(); ) {
+//			srcDir = itSrc.next();
+//			break;
+//		}
+//		
+//		
+//		
+//		SpringProperties springPersistProperties = new SpringProperties(proj);
+//		SpringDefinitions springDefinitions  = springPersistProperties.loadSpringDefinitions();
+//		
+//        for (int i = 0; i < tableItem.length; i++) {
+//            TableItem item = tableItem[i];
+//            	
+//        	List<Entity> listEntity = new ArrayList<Entity>();
+//        	
+//            StringTokenizer cpTokenizer = new StringTokenizer(item.getText(1), ",");
+//            while ( cpTokenizer.hasMoreElements() ) {
+//                String element = cpTokenizer.nextToken();
+//                
+//                //System.out.println("entity string  "+element);
+//
+//    			for(Iterator<Entity> it = entityList.iterator(); it.hasNext(); ) {
+//    				Entity entity = (Entity) it.next();
+//    				
+//                    //System.out.println("entity.getEntityName()  "+entity.getEntityName()+" - "+entity.getEntityName().equals(element) );        				
+//
+//    				if (entity.getEntityName().equals(element.trim())  ) {
+//    					//System.out.println("       entity list  "+entity.getEntityName());
+//    					listEntity.add(entity);
+//    				}
+//
+//    			}            	
+//                
+//
+//            }            	
+//        	
+//        	
+//        	SpringServices springServices = new SpringServices();
+//			springServices.setEntity(listEntity);
+//			
+//			springServices.setServiceName( item.getText(0) );
+//			springServices.setEnable( item.getChecked() );
+//		
+//			
+//	        Map<String, String> mapRoot = new HashMap<String, String>();
+//	        mapRoot.put("serviceName", item.getText(0) );
+//	        ParseTemplate parseTemplate = new ParseTemplate();
+//	        
+//	        
+//			springServices.setServiceInterfacePackage( springDefinitions.getServiceInterfacePackage() );
+//			springServices.setServiceInterfaceClassName( parseTemplate.loadTemplateFromString( springDefinitions.getServiceInterfacePattern(), mapRoot) );
+//			springServices.setServiceInterfaceFileName( springServices.getServiceInterfaceClassName()+".java" );
+//			springServices.setServiceInterfaceSrcDir(srcDir);
+//			
+//			
+//			springServices.setDaoInterfacePackage( springDefinitions.getDaoInterfacePackage() );
+//			springServices.setDaoInterfaceClassName( parseTemplate.loadTemplateFromString( springDefinitions.getDaoInterfacePattern(), mapRoot) );
+//			springServices.setDaoInterfaceFileName( springServices.getDaoInterfaceClassName()+".java" );
+//			springServices.setDaoInterfaceSrcDir(srcDir);
+//			
+//			
+//			springServices.setServiceImplementationPackage( springDefinitions.getServiceImplementationPackage() );
+//			springServices.setServiceImplementationClassName( parseTemplate.loadTemplateFromString( springDefinitions.getServiceImplementationPattern(), mapRoot) );
+//			springServices.setServiceImplementationFileName( springServices.getServiceImplementationClassName()+".java" );
+//			springServices.setServiceImplementationSrcDir(srcDir);
+//			
+//			springServices.setDaoImplementationPackage( springDefinitions.getDaoImplementationPackage() );
+//			springServices.setDaoImplementationClassName( parseTemplate.loadTemplateFromString( springDefinitions.getDaoImplementationPattern(), mapRoot) );
+//			springServices.setDaoImplementationFileName( springServices.getDaoImplementationClassName()+".java" );
+//			springServices.setDaoImplementationSrcDir(srcDir);
+//			
+//			listSpringServices.add(springServices);
+//				
+//            
+//        }
+//        
+//
+//        
+//		springDefinitions.setSpringServices(listSpringServices);
+//        
+//		return springDefinitions;
+//		
+//	}		
 	
 	
 
@@ -885,6 +1015,10 @@ public class SpringNewWizardPage extends WizardPage {
 	
 	public void setEntityGrid() {
 		
+		Device device = Display.getCurrent();
+		Color colorCustom = new Color (device, 122, 202, 255);
+		
+		
 		ProjectUtils projectUtils = new ProjectUtils();
 		IProject proj = projectUtils.getProject(selection);
 		
@@ -895,6 +1029,8 @@ public class SpringNewWizardPage extends WizardPage {
 		SpringProperties springProperties = new SpringProperties(proj);
 		SpringDefinitions springDefinitions = springProperties.loadSpringDefinitions();
 		List<SpringServices> listSpringServices = springDefinitions.getSpringServices();
+		
+		
 		
 		for(Iterator<Entity> it = entityList.iterator(); it.hasNext(); ) {
 			Entity s = it.next();
@@ -908,26 +1044,63 @@ public class SpringNewWizardPage extends WizardPage {
 			
 			
 			tableItem1 = new TableItem(tableSpringServices, SWT.NONE); 
-			tableItem1.setText( new String[] { serviceName, s.getEntityName() } );
+			tableItem1.setText( new String[] { serviceName, s.getEntityName(), "false" } );
 			
-
+			StringBuilder selectedServices = new StringBuilder();
 			if (listSpringServices!=null) {
 				for(Iterator<SpringServices> itSpringServices = listSpringServices.iterator(); itSpringServices.hasNext(); ) {
 					SpringServices springServices = (SpringServices) itSpringServices.next();
 
 					if (springServices.getServiceName().equals(serviceName) ) {
-						tableItem1.setChecked(true);
+						tableItem1.setChecked( springServices.getEnable() );
 					}
 					
-					List<Entity> listEntity = springServices.getEntity();
-					for(Iterator<Entity> itEntity = listEntity.iterator(); itEntity.hasNext(); ) {
-						Entity entity = (Entity) itEntity.next();
-						//System.out.println( "    entities "+entity.getEntityName()+" ");
-					}
+//					List<Entity> listEntity = springServices.getEntity();
+//					for(Iterator<Entity> itEntity = listEntity.iterator(); itEntity.hasNext(); ) {
+//						Entity entity = (Entity) itEntity.next();
+//						
+//						selectedServices.append( entity.getEntityName() );
+//						System.out.println( "    entities "+entity.getEntityName()+" ");
+//					}
 				}		
 			}
 			
-		}			
+			//tableItem1.setText( new String[] { serviceName, selectedServices.toString() } );
+			
+		}
+		
+		
+		
+		for(Iterator<SpringServices> itSpringServices = listSpringServices.iterator(); itSpringServices.hasNext(); ) {
+			SpringServices springServices = (SpringServices) itSpringServices.next();
+			
+			if ( springServices.getIsCustom() ) {
+				
+				StringBuilder selectedServices = new StringBuilder();
+				
+				List<Entity> listEntity = springServices.getEntity();
+				for(Iterator<Entity> itEntity = listEntity.iterator(); itEntity.hasNext(); ) {
+					Entity entity = (Entity) itEntity.next();
+					selectedServices.append( ", "+entity.getEntityName() );
+				}				
+				
+				
+				tableItem1 = new TableItem(tableSpringServices, SWT.NONE);
+				tableItem1.setText( new String[] { springServices.getServiceName(), selectedServices.toString().substring(2) , "true" } );
+				tableItem1.setChecked( springServices.getEnable() );
+				tableItem1.setBackground(colorCustom);
+				
+			}
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
 		
 	}	
 	
@@ -936,6 +1109,7 @@ public class SpringNewWizardPage extends WizardPage {
 		List<Template> templateList = new ArrayList<Template>();
 		
 		TableItem[] items = tableTemplates.getItems();
+		
 		
 		for (int i = 0; i < items.length; i++) {
 			Template template = new Template();

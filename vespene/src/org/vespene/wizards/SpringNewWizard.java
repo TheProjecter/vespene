@@ -10,11 +10,12 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.vespene.project.AnnotationsUtils;
+import org.vespene.project.ParseXml;
 import org.vespene.project.ProjectUtils;
 import org.vespene.properties.SpringProperties;
-import org.vespene.spring.Entity;
-import org.vespene.spring.SpringDefinitions;
-import org.vespene.spring.SpringServices;
+import org.vespene.spring.model.Entity;
+import org.vespene.spring.model.SpringDefinitions;
+import org.vespene.spring.model.SpringServices;
 
 
 
@@ -29,6 +30,16 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 	public SpringNewWizard() {
 		super();
 		System.out.println("SpringNewWizard");
+		
+		
+		//ParseXml parseXml = new ParseXml();
+		//parseXml.readConfig("C:\\oepe-ganymede\\runtime-New_configurationVespene\\vorlon\\WebContent\\WEB-INF\\web.xml");
+		
+		
+		
+		
+		
+		
 		setNeedsProgressMonitor(true);
 		setWindowTitle("New Vespene artifacts...");
 	}
@@ -73,38 +84,42 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 				
 				for(Iterator<SpringServices> it = listSpringServices.iterator(); it.hasNext(); ) {
 					final SpringServices springServices = (SpringServices) it.next();
+					
+					if ( springServices.getEnable() ) {
 			        
-					SpringGenJob springGenJob = new SpringGenJob("creating service interface for "+springServices.getServiceName());
-					springGenJob.setSpringServices(springServices);
-					springGenJob.setSrcDir(springServices.getServiceInterfaceSrcDir());
-					springGenJob.set_package(springDefinitions.getServiceInterfacePackage());
-					springGenJob.setFileName(springServices.getServiceInterfaceFileName());
-					springGenJob.setTemplateFile(springDefinitions.getServiceInterfaceTemplateFile());
-					springGenJob.schedule();
+						SpringGenJob springGenJob = new SpringGenJob("creating service interface for "+springServices.getServiceName());
+						springGenJob.setSpringServices(springServices);
+						springGenJob.setSrcDir(springServices.getServiceInterfaceSrcDir());
+						springGenJob.set_package(springDefinitions.getServiceInterfacePackage());
+						springGenJob.setFileName(springServices.getServiceInterfaceFileName());
+						springGenJob.setTemplateFile(springDefinitions.getServiceInterfaceTemplateFile());
+						springGenJob.schedule();
+						
+						springGenJob = new SpringGenJob("creating service implementation for "+springServices.getServiceName());
+						springGenJob.setSpringServices(springServices);
+						springGenJob.setSrcDir(springServices.getServiceImplementationSrcDir());
+						springGenJob.set_package(springDefinitions.getServiceImplementationPackage());
+						springGenJob.setFileName(springServices.getServiceImplementationFileName());
+						springGenJob.setTemplateFile(springDefinitions.getServiceImplementationTemplateFile());
+						springGenJob.schedule();
+						
+						springGenJob = new SpringGenJob("creating dao interface for "+springServices.getServiceName());
+						springGenJob.setSpringServices(springServices);
+						springGenJob.setSrcDir(springServices.getDaoInterfaceSrcDir());
+						springGenJob.set_package(springDefinitions.getDaoInterfacePackage());
+						springGenJob.setFileName(springServices.getDaoInterfaceFileName());
+						springGenJob.setTemplateFile(springDefinitions.getDaoInterfaceTemplateFile());
+						springGenJob.schedule();
+						
+						springGenJob = new SpringGenJob("creating dao implementation for "+springServices.getServiceName());
+						springGenJob.setSpringServices(springServices);
+						springGenJob.setSrcDir(springServices.getDaoImplementationSrcDir());
+						springGenJob.set_package(springDefinitions.getDaoImplementationPackage());
+						springGenJob.setFileName(springServices.getDaoImplementationFileName());
+						springGenJob.setTemplateFile(springDefinitions.getDaoImplementationTemplateFile());
+						springGenJob.schedule();
 					
-					springGenJob = new SpringGenJob("creating service implementation for "+springServices.getServiceName());
-					springGenJob.setSpringServices(springServices);
-					springGenJob.setSrcDir(springServices.getServiceImplementationSrcDir());
-					springGenJob.set_package(springDefinitions.getServiceImplementationPackage());
-					springGenJob.setFileName(springServices.getServiceImplementationFileName());
-					springGenJob.setTemplateFile(springDefinitions.getServiceImplementationTemplateFile());
-					springGenJob.schedule();
-					
-					springGenJob = new SpringGenJob("creating dao interface for "+springServices.getServiceName());
-					springGenJob.setSpringServices(springServices);
-					springGenJob.setSrcDir(springServices.getDaoInterfaceSrcDir());
-					springGenJob.set_package(springDefinitions.getDaoInterfacePackage());
-					springGenJob.setFileName(springServices.getDaoInterfaceFileName());
-					springGenJob.setTemplateFile(springDefinitions.getDaoInterfaceTemplateFile());
-					springGenJob.schedule();
-					
-					springGenJob = new SpringGenJob("creating dao implementation for "+springServices.getServiceName());
-					springGenJob.setSpringServices(springServices);
-					springGenJob.setSrcDir(springServices.getDaoImplementationSrcDir());
-					springGenJob.set_package(springDefinitions.getDaoImplementationPackage());
-					springGenJob.setFileName(springServices.getDaoImplementationFileName());
-					springGenJob.setTemplateFile(springDefinitions.getDaoImplementationTemplateFile());
-					springGenJob.schedule();				
+					}
 					
 				}				
 				

@@ -1,12 +1,16 @@
 package org.vespene.wizards;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -26,12 +30,27 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.vespene.spring.Entity;
+import org.vespene.project.ProjectUtils;
+import org.vespene.project.Utils;
+import org.vespene.properties.SpringProperties;
+import org.vespene.spring.model.Entity;
+import org.vespene.spring.model.SpringDefinitions;
+import org.vespene.spring.model.SpringServices;
 
 
 public class CustomSpringService {
 	
-	public CustomSpringService() {
+	private Text textServiceInterface;
+	private Table tableCustomSpringServices;
+	private Table tableSpringServices;
+	private List<Entity> entityList;
+	
+	
+	
+	public CustomSpringService(Table tableSpringServices, List<Entity> entityList) {
+		this.tableSpringServices = tableSpringServices;
+		this.entityList = entityList;
+		
 	}
 	
 	
@@ -40,7 +59,7 @@ public class CustomSpringService {
 
 	
 
-	public void show(Composite parent, List<Entity> entityList) {
+	public void show(Composite parent) {
         Display display = parent.getDisplay();
         final Shell shell = new Shell(display, SWT.TITLE | SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.CENTER);
         
@@ -73,7 +92,7 @@ public class CustomSpringService {
 		Label label1 = new Label(shell, SWT.NONE);
 		label1.setText("Service name");
 
-		Text textServiceInterface = new Text(shell, SWT.SINGLE | SWT.BORDER);
+		textServiceInterface = new Text(shell, SWT.SINGLE | SWT.BORDER);
 		GridData text1LData = new GridData();
 		text1LData.horizontalAlignment = GridData.FILL;
 		text1LData.minimumWidth = 250;
@@ -111,22 +130,22 @@ public class CustomSpringService {
 			
 			table1LData.grabExcessHorizontalSpace = true;
 			
-			Table tableDBTables = new Table(group1, SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
-			tableDBTables.setLayoutData(table1LData);
-			tableDBTables.setHeaderVisible(true);
-			tableDBTables.setLinesVisible(true);
+			tableCustomSpringServices = new Table(group1, SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
+			tableCustomSpringServices.setLayoutData(table1LData);
+			tableCustomSpringServices.setHeaderVisible(true);
+			tableCustomSpringServices.setLinesVisible(true);
 			
 	
-			tableDBTables.setLayoutData(table1LData);		
+			tableCustomSpringServices.setLayoutData(table1LData);		
 			
 			TableColumn tableColumn1;
 			
 			{
-				tableColumn1 = new TableColumn(tableDBTables, SWT.NONE);
+				tableColumn1 = new TableColumn(tableCustomSpringServices, SWT.NONE);
 				tableColumn1.setText("Entity");
 				tableColumn1.setWidth(200);
 				tableColumn1.setResizable(false);
-				tableColumn1.setData(tableDBTables);
+				tableColumn1.setData(tableCustomSpringServices);
 				
 			}
 			{
@@ -134,7 +153,7 @@ public class CustomSpringService {
 				for(Iterator<Entity> it = entityList.iterator(); it.hasNext(); ) {
 					Entity s = (Entity) it.next();
 					
-					TableItem tableItem1 = new TableItem(tableDBTables, SWT.NONE); 
+					TableItem tableItem1 = new TableItem(tableCustomSpringServices, SWT.NONE); 
 					tableItem1.setText( new String[] { s.getEntityName() } );
 				}					
 
@@ -164,6 +183,7 @@ public class CustomSpringService {
 				
 				button14.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
+						updateSpringDefinitions();
 						shell.dispose();
 					}
 				});					
@@ -177,40 +197,68 @@ public class CustomSpringService {
 				button15LData.widthHint = 70;
 				button15.setLayoutData(button15LData);
 				button15.setText("Cancel");
+				
+				button15.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						shell.dispose();
+					}
+				});					
+				
+				
+				
 			}
 		}		
 
 		
-        
-        
-		System.out.println("zzzzzzzzzzzzzzzzzzzzzzz " );
-        
-        
         shell.open();
+        
+        
+   
+        
 		
 	}
 	
 	
-	
-
-
-
-
-
-
-
-
-
-
-
-
 
 	
-	
-	
-	
-	
-	
+
+
+
+	private void updateSpringDefinitions() {
+        TableItem[] tableItemCustom = tableCustomSpringServices.getItems();
+
+		Device device = Display.getCurrent();
+		Color colorCustom = new Color (device, 122, 202, 255);
+
+
+        TableItem tableItemSpringServices = new TableItem(tableSpringServices, SWT.NONE); 
+		
+        
+        StringBuilder selectedServices = new StringBuilder();
+        
+		
+        for (int i = 0; i < tableItemCustom.length; i++) {
+            TableItem item = tableItemCustom[i];
+            if (item.getChecked()) {
+            	selectedServices.append(", "+item.getText());
+//            	if (i==0) {
+//            		selectedServices.append(item.getText());
+//            	} else {
+//            		selectedServices.append(", "+item.getText());
+//            	}
+            }
+        }
+        
+        tableItemSpringServices.setText( new String[] { textServiceInterface.getText(), selectedServices.toString().substring(2), "true" } );
+        tableItemSpringServices.setChecked(true);
+        tableItemSpringServices.setBackground(colorCustom);
+		
+		
+	}
+
+
+
+
 	
 
 }
