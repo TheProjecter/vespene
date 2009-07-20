@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.vespene.freemarker.ParseTemplate;
 import org.vespene.project.Utils;
-import org.vespene.spring.SpringDefinitions;
-import org.vespene.spring.SpringServices;
+import org.vespene.spring.model.SpringDefinitions;
+import org.vespene.spring.model.SpringServices;
 
 public class SpringGenJob extends WorkspaceJob {
 	private SpringServices springServices; 

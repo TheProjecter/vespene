@@ -15,9 +15,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.vespene.daoh2.project.ProjectMetadata;
 import org.vespene.project.AnnotationsUtils;
 import org.vespene.properties.SpringProperties;
-import org.vespene.spring.Entity;
-import org.vespene.spring.SpringDefinitions;
-import org.vespene.spring.SpringServices;
+import org.vespene.spring.model.Entity;
+import org.vespene.spring.model.SpringDefinitions;
+import org.vespene.spring.model.SpringServices;
 
 
 

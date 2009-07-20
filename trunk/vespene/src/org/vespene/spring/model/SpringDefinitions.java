@@ -1,31 +1,47 @@
-package org.vespene.spring;
+package org.vespene.spring.model;
 
 import java.util.List;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.Root;
 
+@Root
 public class SpringDefinitions {
 	
+	@Element(required=false)
 	private String ServiceNamePattern;
+	@Element(required=false)
 	private String serviceInterfacePackage;
-	private String daoInterfacePackage; 
-	private String serviceImplementationPackage; 
+	@Element(required=false)
+	private String daoInterfacePackage;
+	@Element(required=false)
+	private String serviceImplementationPackage;
+	@Element(required=false)
 	private String daoImplementationPackage; 
 	
 	
-	
+	@Element(required=false)
 	private String serviceInterfaceTemplateFile;
+	@Element(required=false)
 	private String serviceInterfacePattern;
 	
+	@Element(required=false)
 	private String daoInterfaceTemplateFile;
+	@Element(required=false)
 	private String daoInterfacePattern;
 	
+	@Element(required=false)
 	private String serviceImplementationTemplateFile;
+	@Element(required=false)
 	private String serviceImplementationPattern;
 	
+	@Element(required=false)
 	private String daoImplementationTemplateFile;
+	@Element(required=false)
 	private String daoImplementationPattern;	
 
-	
+	@ElementList(required=false, inline=true)
 	private List<SpringServices> springServices;
 
 

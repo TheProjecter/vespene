@@ -1,10 +1,19 @@
-package org.vespene.spring;
+package org.vespene.spring.model;
 
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+
+@Root
 public class Entity {
+	@Element(required=false)
 	private String entityName;
-	private String entityPackage;	
+	@Element(required=false)
+	private String entityPackage;
+	@Element(required=false)
 	private String absolutePath;
+	@Element(required=false)
 	private String pkType;
+	@Element(required=false)
 	private String pkVar;
 
 	public String getEntityName() {
