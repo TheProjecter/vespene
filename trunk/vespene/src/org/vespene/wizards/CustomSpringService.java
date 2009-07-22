@@ -60,10 +60,12 @@ public class CustomSpringService {
 	
 
 	public void show(Composite parent) {
-        Display display = parent.getDisplay();
-        final Shell shell = new Shell(display, SWT.TITLE | SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.CENTER);
+        //Display display = parent.getDisplay();
+        //final Shell shell = new Shell(display, SWT.TITLE | SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.CENTER);
         
-        //Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        final Shell shell = new Shell(parent.getShell(), SWT.TITLE | SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.CENTER);
+        
+   
         
         
 		Image image = new Image(parent.getDisplay(), getClass().getResourceAsStream("/icons/add_obj.gif") );
@@ -71,7 +73,7 @@ public class CustomSpringService {
         
         shell.setSize (300, 400);
         
-        Monitor primary = display.getPrimaryMonitor();
+        Monitor primary = parent.getDisplay().getPrimaryMonitor();
         Rectangle bounds = primary.getBounds();
         Rectangle rect = shell.getBounds();
         
