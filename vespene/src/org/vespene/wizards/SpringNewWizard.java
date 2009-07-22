@@ -10,7 +10,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.vespene.project.AnnotationsUtils;
-import org.vespene.project.ParseXml;
 import org.vespene.project.ProjectUtils;
 import org.vespene.properties.SpringProperties;
 import org.vespene.spring.model.Entity;
@@ -30,16 +29,6 @@ public class SpringNewWizard extends Wizard implements INewWizard {
 	public SpringNewWizard() {
 		super();
 		System.out.println("SpringNewWizard");
-		
-		
-		//ParseXml parseXml = new ParseXml();
-		//parseXml.readConfig("C:\\oepe-ganymede\\runtime-New_configurationVespene\\vorlon\\WebContent\\WEB-INF\\web.xml");
-		
-		
-		
-		
-		
-		
 		setNeedsProgressMonitor(true);
 		setWindowTitle("New Vespene artifacts...");
 	}

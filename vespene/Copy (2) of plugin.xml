@@ -58,6 +58,18 @@
    
    
    <extension point="org.eclipse.ui.propertyPages">
+   <!--
+      <category
+            name="Vespene cat"
+            id="vespene">
+      </category>    
+      <category
+            name="Prop"
+            parentCategory="vespene"
+            id="properties">
+      </category>
+      -->      
+        
       <page 
             class="org.vespene.properties.VespenePropertyPage"
             id="org.vespene.properties.VespenePropertyPage"
@@ -141,44 +153,43 @@
           id="org.vespene.builder.VespeneBuilder">
     </builder>
  </extension>
- 
- 
- <extension point="org.eclipse.ui.popupMenus">
+ <extension
+       point="org.eclipse.ui.popupMenus">
     <objectContribution
+          adaptable="true"
           id="vespene.contribution1"
           nameFilter="*"
           objectClass="org.eclipse.core.resources.IProject">
-       <menu
-             id="vespene.menu1"
-             label="Vespene"
-             path="additions">
-          <separator
-                name="group1">
-          </separator>
-       </menu>
-       
-       
-       
-       <action
-             class="org.vespene.popup.actions.VespeneSpringAction"
-             enablesFor="+"
-             id="org.vespene.popup.actions.VespeneSpringAction"
-             label="Generate Spring DAO classes"
-             menubarPath="vespene.menu1/group1">
-			<enablement>
-				<objectState name="nature" value="org.vespene.builder.VespeneNature"/>
-			</enablement>
-       </action>
        <action
              class="org.vespene.builder.ToggleNatureAction"
              enablesFor="+"
              icon="icons/cubes.png"
-             id="org.vespene.builder.ToggleNatureAction"
+             id="vespene.addRemoveNatureAction"
              label="Add/Remove Vespene Nature"
-             menubarPath="vespene.menu1/group1">
+             menubarPath="additions">
        </action>
     </objectContribution>
-   
+    <objectContribution
+          adaptable="true"
+          id="vespene.contribution2"
+          nameFilter="*"
+          objectClass="org.eclipse.core.resources.IProject">
+       <action
+             class="org.vespene.wizards.SpringNewWizard"
+             enablesFor="+"
+             icon="icons/cubes.png"
+             id="org.vespene.wizards.SpringNewWizard"
+             label="Generate Spring DAO Classes"
+             menubarPath="additions">
+             
+			<enabledWhen>
+		      <adapt type="org.eclipse.core.resources.IProject">
+		      	 <test property="org.eclipse.core.resources.projectNature" value="org.vespene.builder.VespeneNature"/>
+		      </adapt>
+			</enabledWhen>             
+             
+       </action>
+    </objectContribution>    
  </extension>
  <extension
        id="xmlProblem"

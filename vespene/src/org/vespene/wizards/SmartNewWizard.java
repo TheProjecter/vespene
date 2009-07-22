@@ -84,6 +84,8 @@ public class SmartNewWizard extends Wizard implements INewWizard {
 		ProjectUtils projectUtils = new ProjectUtils();
 		IProject proj = projectUtils.getProject(selection);
 		
+		
+		
 		Db db = loadDBParams();
 		DBConnection dbConn = new DBConnection();
 		Connection connection = null;
